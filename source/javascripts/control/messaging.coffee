@@ -23,7 +23,10 @@ control.sendMessage = (messageData) ->
 
 handleMessage = (data) ->
   try
-    message = JSON.parse(data)
+    if typeof data == "string"
+      message = JSON.parse(data)
+    else
+      message = data
 
     console.log "received message: ", data
 

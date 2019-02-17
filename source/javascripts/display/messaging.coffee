@@ -22,7 +22,10 @@ display.sendMessage = (messageData) ->
 
 handleMessage = (data, source) ->
   try
-    message = JSON.parse(data)
+    if typeof data == "string"
+      message = JSON.parse(data)
+    else
+      message = data
 
     console.log "received message: ", data
 
