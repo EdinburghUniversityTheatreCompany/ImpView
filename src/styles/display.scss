@@ -1,0 +1,464 @@
+/* ImpView display window — no Bootstrap, no vendor prefixes */
+
+/* ─── Font ─── */
+@font-face {
+  src: url('/fonts/Ubuntu-Regular.ttf');
+  font-family: 'Ubuntu';
+}
+
+/* ─── Base ─── */
+body {
+  background: #000000;
+  color: #ededed;
+  font-family: 'Ubuntu', sans-serif;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ─── First-interaction overlay ─── */
+// Browsers block autoplay until the user activates the document. The control
+// window's "Start Display" click doesn't count for the popup — the display
+// needs its own gesture. This overlay collects that gesture and then removes
+// itself, so video.play() works the first time the operator hits it.
+#activation-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: opacity 0.4s;
+}
+
+#activation-overlay.dismissed {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#activation-title {
+  font-size: 64px;
+  color: #e26b18;
+  margin-bottom: 20px;
+}
+
+#activation-subtitle {
+  font-size: 28px;
+  color: #aaa;
+}
+
+/* ─── Layout ─── */
+// `display: table-cell` (the original approach) creates a flattening context
+// that overrides `transform-style: preserve-3d` on descendants — the alphabet
+// ring would collapse to a 2D diagonal line during its transition, only
+// snapping into 3D after the transition ended. Flexbox centering avoids this.
+.content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.center.video { position: relative; }
+
+.center.video > video { width: 100%; }
+
+.content > .img > * {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ─── ImpView elements ─── */
+#i {
+  background-image: url('/content/i.png');
+}
+
+#text {
+  font-size: 120px;
+}
+
+#text div { display: inline-block; }
+
+#text .word { white-space: nowrap; }
+
+#credits {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(226, 107, 24, 1);
+
+  h1 { font-size: 110px; }
+
+  p {
+    font-size: 90px;
+    margin: 0;
+  }
+}
+
+.emoroco-text {
+  font-size: 120px;
+  margin: 0;
+}
+
+.emoroco-text.transition {
+  transition: top 2s, left 2s, opacity 1s, font 1s;
+}
+
+/* ─── Colour Chase ─── */
+#i.colourChase {
+  background-image: none;
+  mask-image: url('/content/mask.png');
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  background-color: #e26b18;
+}
+
+/* ─── Alphabet ─── */
+// Perspective is still useful so the 3D ring has depth once visible, but we
+// now fade-in on show instead of rotating the whole ring into place — the
+// rotation animation was brittle across browsers during the migration and the
+// fade reads just as well.
+.center { perspective: 1500px; }
+
+.alphabet {
+  list-style: none;
+  display: inline-block;
+  width: 175px;
+  transform-style: preserve-3d;
+  transform: rotateX(13deg);
+}
+
+.alphabet li {
+  position: absolute;
+  font-size: 120px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  width: 120px;
+  text-align: center;
+}
+
+.alphabet li.current {
+  margin-top: -20px;
+  margin-left: -20px;
+  font-size: 160px;
+  width: 160px;
+}
+
+@for $i from 1 through 26 {
+  .alphabet li:nth-child(#{$i}) {
+    transform: rotateY(#{($i - 1) * -13.85}deg) translateZ(600px);
+  }
+}
+
+// Fade happens on the WRAPPER, not on the alphabet itself — Firefox flattens
+// 3D subtrees during transitions, so fading the 3D element directly causes a
+// "snap into ring" at the end of the fade. Keeping the .alphabet's 3D layer
+// static (always opacity 1) sidesteps that.
+#alphabet-wrap.initial { opacity: 0; }
+
+#alphabet-wrap.animate { transition: opacity 1s; }
+
+.alphabet li { transition: transform 0.5s; }
+
+/* ═══════════════════════════════════════════════════════
+   ANIMATIONS — unprefixed only (modern Chrome)
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── Base animated class ─── */
+.animated {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+.animated.hinge { animation-duration: 2s; }
+
+/* ─── Attention ─── */
+.bounce         { animation-name: bounce; }
+.pulse          { animation-name: pulse; }
+.swing          { transform-origin: top center; animation-name: swing; }
+.wiggle         { animation-name: wiggle; animation-timing-function: ease-in; animation-duration: .75s; }
+
+/* ─── Colour/motion ─── */
+.colourChase    { animation: colourChase 3s linear infinite; }
+.moveAbout      { animation-name: moveAbout; animation-duration: 3s; animation-timing-function: linear; animation-iteration-count: infinite; }
+
+/* ─── Spin ─── */
+.spin  { animation-name: spin;  animation-duration: 0.5s !important; animation-timing-function: linear; }
+.spinY { animation-name: spinY; }
+
+/* ─── Grow/shrink ─── */
+.growIn       { animation-name: growIn; }
+.growSpinIn   { animation-name: growSpinIn; animation-timing-function: linear; }
+.shrinkOut    { animation-name: shrinkOut; }
+.shrinkSpinOut { animation-name: shrinkSpinOut; }
+
+/* ─── Bounce In/Out ─── */
+.bounceInLeft   { animation-name: bounceInLeft; }
+.bounceInRight  { animation-name: bounceInRight; }
+.bounceInUp     { animation-name: bounceInUp; }
+.bounceOutDown  { animation-name: bounceOutDown; }
+.bounceOutLeft  { animation-name: bounceOutLeft; }
+.bounceOutRight { animation-name: bounceOutRight; }
+
+/* ─── Fade ─── */
+.fadeIn  { animation-name: fadeIn; }
+.fadeOut { animation-name: fadeOut; }
+
+/* ─── Flip ─── */
+.flipInY  { backface-visibility: visible !important; animation-name: flipInY; }
+.flipOutY { backface-visibility: visible !important; animation-name: flipOutY; }
+.flipUp   { animation-name: flipUp;   transform-origin: bottom; }
+.flipDown { animation-name: flipDown; transform-origin: bottom; }
+
+/* ─── Blur ─── */
+.blurIn  { animation-name: blurIn; }
+.blurOut { animation-name: blurOut; }
+
+/* ─── Hinge ─── */
+.hinge { animation-name: hinge; }
+
+/* ─── Roll ─── */
+.rollIn  { animation-name: rollIn; }
+.rollOut { animation-name: rollOut; }
+
+/* ─── Rotate ─── */
+.rotateInDownLeft  { animation-name: rotateInDownLeft; }
+.rotateInUpLeft    { animation-name: rotateInUpLeft; }
+.rotateInUpRight   { animation-name: rotateInUpRight; }
+.rotateOutUpRight  { animation-name: rotateOutUpRight; }
+
+/* ═══════════════════════════════════════════════════════
+   KEYFRAMES
+   ═══════════════════════════════════════════════════════ */
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-30px); }
+  60% { transform: translateY(-15px); }
+}
+
+@keyframes pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes swing {
+  20%  { transform: rotate(15deg); }
+  40%  { transform: rotate(-10deg); }
+  60%  { transform: rotate(5deg); }
+  80%  { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes wiggle {
+  0%   { transform: skewX(9deg); }
+  10%  { transform: skewX(-8deg); }
+  20%  { transform: skewX(7deg); }
+  30%  { transform: skewX(-6deg); }
+  40%  { transform: skewX(5deg); }
+  50%  { transform: skewX(-4deg); }
+  60%  { transform: skewX(3deg); }
+  70%  { transform: skewX(-2deg); }
+  80%  { transform: skewX(1deg); }
+  90%  { transform: skewX(0deg); }
+  100% { transform: skewX(0deg); }
+}
+
+@keyframes colourChase {
+  0%    { background-color: #ff0000; }
+  16.6% { background-color: #ffff00; }
+  33.3% { background-color: #00ff00; }
+  50%   { background-color: #00ffff; }
+  66.6% { background-color: #0000ff; }
+  83.3% { background-color: #ff00ff; }
+  100%  { background-color: #ff0000; }
+}
+
+@keyframes moveAbout {
+  0%   { transform: rotateX(-30deg) rotateY(30deg); }
+  25%  { transform: rotateX(30deg) rotateY(30deg); }
+  50%  { transform: rotateX(30deg) rotateY(-30deg); }
+  75%  { transform: rotateX(-30deg) rotateY(-30deg); }
+  100% { transform: rotateX(-30deg) rotateY(30deg); }
+}
+
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes spinY {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+@keyframes growIn {
+  0%   { transform: scale(0); }
+  80%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes growSpinIn {
+  0%   { transform: scale(0) rotate(720deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes shrinkOut {
+  0%   { transform: scale(1); }
+  20%  { transform: scale(1.1); }
+  100% { transform: scale(0); }
+}
+
+@keyframes shrinkSpinOut {
+  0%   { transform: scale(1) rotate(0deg); }
+  10%  { transform: scale(1.1) rotate(0deg); }
+  100% { transform: scale(0) rotate(720deg); }
+}
+
+@keyframes bounceInLeft {
+  0%   { opacity: 0; transform: translateX(-2000px); }
+  60%  { opacity: 1; transform: translateX(30px); }
+  80%  { transform: translateX(-10px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes bounceInRight {
+  0%   { opacity: 0; transform: translateX(2000px); }
+  60%  { opacity: 1; transform: translateX(-30px); }
+  80%  { transform: translateX(10px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes bounceInUp {
+  0%   { opacity: 0; transform: translateY(2000px); }
+  60%  { opacity: 1; transform: translateY(-30px); }
+  80%  { transform: translateY(10px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes bounceOutDown {
+  0%   { transform: translateY(0); }
+  20%  { opacity: 1; transform: translateY(-20px); }
+  100% { opacity: 0; transform: translateY(2000px); }
+}
+
+@keyframes bounceOutLeft {
+  0%   { transform: translateX(0); }
+  20%  { opacity: 1; transform: translateX(20px); }
+  100% { opacity: 0; transform: translateX(-2000px); }
+}
+
+@keyframes bounceOutRight {
+  0%   { transform: translateX(0); }
+  20%  { opacity: 1; transform: translateX(-20px); }
+  100% { opacity: 0; transform: translateX(2000px); }
+}
+
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes flipInY {
+  0%   { transform: perspective(400px) rotateY(90deg); opacity: 0; }
+  40%  { transform: perspective(400px) rotateY(-10deg); }
+  70%  { transform: perspective(400px) rotateY(10deg); }
+  100% { transform: perspective(400px) rotateY(0deg); opacity: 1; }
+}
+
+@keyframes flipOutY {
+  0%   { transform: perspective(400px) rotateY(0deg); opacity: 1; }
+  100% { transform: perspective(400px) rotateY(90deg); opacity: 0; }
+}
+
+@keyframes flipUp {
+  0%   { transform: rotateX(90deg); }
+  100% { transform: rotateX(0deg); }
+}
+
+@keyframes flipDown {
+  0%   { transform: rotateX(0deg); }
+  100% { transform: rotateX(90deg); }
+}
+
+@keyframes blurIn {
+  0%   { filter: blur(100px); opacity: 0; }
+  20%  { filter: blur(100px); opacity: 1; }
+  100% { filter: blur(0px);   opacity: 1; }
+}
+
+@keyframes blurOut {
+  0%   { filter: blur(0px);   opacity: 1; }
+  80%  { filter: blur(100px); opacity: 1; }
+  100% { filter: blur(100px); opacity: 0; }
+}
+
+@keyframes hinge {
+  0%       { transform: rotate(0);           transform-origin: top left; animation-timing-function: ease-in-out; }
+  20%, 60% { transform: rotate(80deg);       transform-origin: top left; animation-timing-function: ease-in-out; }
+  40%      { transform: rotate(60deg);       transform-origin: top left; animation-timing-function: ease-in-out; }
+  80%      { transform: rotate(60deg) translateY(0); opacity: 1; transform-origin: top left; animation-timing-function: ease-in-out; }
+  100%     { transform: translateY(700px);   opacity: 0; }
+}
+
+@keyframes rollIn {
+  0%   { opacity: 0; transform: translateX(-100%) rotate(-120deg); }
+  100% { opacity: 1; transform: translateX(0px) rotate(0deg); }
+}
+
+@keyframes rollOut {
+  0%   { opacity: 1; transform: translateX(0px) rotate(0deg); }
+  100% { opacity: 0; transform: translateX(100%) rotate(120deg); }
+}
+
+@keyframes rotateInDownLeft {
+  0%   { transform-origin: left bottom; transform: rotate(-90deg); opacity: 0; }
+  100% { transform-origin: left bottom; transform: rotate(0); opacity: 1; }
+}
+
+@keyframes rotateInUpLeft {
+  0%   { transform-origin: left bottom; transform: rotate(90deg); opacity: 0; }
+  100% { transform-origin: left bottom; transform: rotate(0); opacity: 1; }
+}
+
+@keyframes rotateInUpRight {
+  0%   { transform-origin: right bottom; transform: rotate(-90deg); opacity: 0; }
+  100% { transform-origin: right bottom; transform: rotate(0); opacity: 1; }
+}
+
+@keyframes rotateOutUpRight {
+  0%   { transform-origin: right bottom; transform: rotate(0); opacity: 1; }
+  100% { transform-origin: right bottom; transform: rotate(90deg); opacity: 0; }
+}
