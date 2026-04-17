@@ -49,7 +49,7 @@ async function renderRow(kind) {
       setTimeout(() => {
         try {
           video.currentTime = 2;
-        } catch (_) {
+        } catch {
           /* metadata not loaded yet */
         }
       }, 1000);

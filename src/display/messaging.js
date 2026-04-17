@@ -1,7 +1,7 @@
 import { $ } from "../lib/dom.js";
 
 const display = window.display;
-const messageHandlers  = display.messageHandlers;
+const messageHandlers = display.messageHandlers;
 const callbackHandlers = display.callbackHandlers;
 
 display.onReadys.push(() => {
@@ -15,7 +15,7 @@ display.sendMessage = (messageData) => {
   display.controller.postMessage(msg, window.location.origin);
 };
 
-function handleMessage(data, source) {
+function handleMessage(data) {
   try {
     let message;
     if (typeof data === "string") {

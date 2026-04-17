@@ -41,7 +41,6 @@ messageHandlers.push((message) => {
     }
     case "roll": {
       const windowHeight = document.body.scrollHeight;
-      const windowWidth = document.body.scrollWidth;
 
       const height = target$.get(0).offsetHeight;
       const triggerHeight = windowHeight / 4;
@@ -68,11 +67,10 @@ messageHandlers.push((message) => {
       });
 
       let progressInterval = setInterval(() => {
-        const currentTop = parseFloat(el.style.top);
-        children.forEach((child, i) => {
+        children.forEach((child) => {
           const childTop = child.getBoundingClientRect().top;
           if (childTop < windowHeight - triggerHeight && child.style.opacity === "0") {
-            animateIn($(child), windowHeight, windowWidth);
+            animateIn($(child));
           }
         });
       }, 100);
@@ -92,7 +90,7 @@ messageHandlers.push((message) => {
   }
 });
 
-function animateIn(item$, windowHeight, windowWidth) {
+function animateIn(item$) {
   item$.css("opacity", "1");
 
   const animations = [

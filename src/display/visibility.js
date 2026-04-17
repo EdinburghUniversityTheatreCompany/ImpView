@@ -1,5 +1,3 @@
-import { $ } from "../lib/dom.js";
-
 const display = window.display;
 
 function getVisibility(target) {

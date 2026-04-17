@@ -13,7 +13,7 @@ control.onReadys.push(() => {
 
 control.sendMessage = (messageData) => {
   const msg = JSON.stringify(messageData);
-  control.display.postMessage(msg, "*");
+  control.display.postMessage(msg, window.location.origin);
 };
 
 function handleMessage(data) {

@@ -1,9 +1,9 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <title>ImpView Control</title>
 
-    <link rel="stylesheet" href="/src/styles/control.scss" />
+    <link rel="stylesheet" href="/src/styles/control.scss">
 
     <script type="module" src="/src/control/main.js"></script>
   </head>
@@ -27,16 +27,16 @@
           type="file"
           accept=".zip,application/zip"
           style="display: none"
-        />
+>
       </div>
 
       <div class="states">
-        <input type="hidden" id="i-state" value="hidden" />
-        <input type="hidden" id="text-state" value="hidden" />
-        <input type="hidden" id="image-state" value="hidden" />
-        <input type="hidden" id="video-state" value="hidden" />
-        <input type="hidden" id="video-play-state" value="hidden" />
-        <input type="hidden" id="alphabet-state" value="hidden" />
+        <input type="hidden" id="i-state" value="hidden">
+        <input type="hidden" id="text-state" value="hidden">
+        <input type="hidden" id="image-state" value="hidden">
+        <input type="hidden" id="video-state" value="hidden">
+        <input type="hidden" id="video-play-state" value="hidden">
+        <input type="hidden" id="alphabet-state" value="hidden">
       </div>
 
       <div id="controls" style="display: none">
@@ -218,14 +218,14 @@
           <h3 class="group-header">Text</h3>
 
           <form class="form-inline">
-            <input id="text-input" class="disable-shortcuts" type="text" autocomplete="off" />
+            <input id="text-input" class="disable-shortcuts" type="text" autocomplete="off">
 
             <a id="controls-show-hide-text" class="btn">Show Text</a>
             <a id="controls-fade-text" class="btn">Fade In Text</a>
 
             <a id="controls-spellcheck-text" class="btn">Spellcheck</a>
 
-            <input id="text-color" type="color" value="#ffffff" class="input-small" />
+            <input id="text-color" type="color" value="#ffffff" class="input-small">
           </form>
 
           <h3 class="group-header">Animate In</h3>
@@ -361,8 +361,8 @@
           <h3 class="group-header">Image</h3>
 
           <form class="form-inline">
-            <input id="image-input" type="text" />
-            <input id="image-file" type="file" />
+            <input id="image-input" type="text">
+            <input id="image-file" type="file">
             <span id="controls-image-loader"></span>
           </form>
 
@@ -373,16 +373,16 @@
 
           <p class="preset-images">
             <a data-shortcut="a">
-              <img src="content/Die.png" />
+              <img src="content/Die.png" alt="Die">
             </a>
             <a data-shortcut="s">
-              <img src="content/beach.jpg" />
+              <img src="content/beach.jpg" alt="Beach">
             </a>
             <a data-shortcut="d">
-              <img src="content/CustomsEndowment.jpg" />
+              <img src="content/CustomsEndowment.jpg" alt="Customs Endowment">
             </a>
             <a data-shortcut="f">
-              <img src="content/Daleks.png" />
+              <img src="content/Daleks.png" alt="Daleks">
             </a>
           </p>
 
@@ -396,15 +396,15 @@
               accept="image/*"
               multiple
               style="display: none"
-            />
+>
           </p>
         </div>
         <div class="control-group" data-shortcut="4">
           <h3 class="group-header">Video</h3>
 
           <form class="form-inline">
-            <input id="video-input" type="text" />
-            <input id="video-file" type="file" />
+            <input id="video-input" type="text">
+            <input id="video-file" type="file">
             <span id="controls-video-loader"></span>
           </form>
 
@@ -417,37 +417,37 @@
           <p class="video-on-end">
             <label>When video ends:</label>
             <label>
-              <input type="radio" name="video-on-end" value="keep" checked />
+              <input type="radio" name="video-on-end" value="keep" checked>
               Stop &amp; keep
             </label>
             <label>
-              <input type="radio" name="video-on-end" value="fade" />
+              <input type="radio" name="video-on-end" value="fade">
               Stop &amp; fade
             </label>
             <label>
-              <input type="radio" name="video-on-end" value="loop" />
+              <input type="radio" name="video-on-end" value="loop">
               Restart
             </label>
           </p>
 
           <p class="preset-videos">
             <a data-shortcut="a">
-              <video src="content/Vortex.mp4" />
+              <video src="content/Vortex.mp4"></video>
             </a>
             <a data-shortcut="s">
-              <video src="content/NewsNight.mp4" />
+              <video src="content/NewsNight.mp4"></video>
             </a>
             <a data-shortcut="d">
-              <video src="content/QuestionTime.mp4" />
+              <video src="content/QuestionTime.mp4"></video>
             </a>
             <a data-shortcut="f">
-              <video src="content/bbcnews.webm" />
+              <video src="content/bbcnews.webm"></video>
             </a>
             <a data-shortcut="g">
-              <video src="content/itvnews.webm" />
+              <video src="content/itvnews.webm"></video>
             </a>
             <a data-shortcut="h">
-              <video src="content/BBCOlympics.webm" />
+              <video src="content/BBCOlympics.webm"></video>
             </a>
           </p>
 
@@ -461,7 +461,7 @@
               accept="video/*"
               multiple
               style="display: none"
-            />
+>
           </p>
         </div>
         <div class="control-group" data-shortcut="5">
@@ -482,7 +482,7 @@
           </p>
 
           <form class="form-inline emoroco-entry" data-id="0">
-            <input class="emoroco-text" type="text" autocomplete="off" list="emotions-list" />
+            <input class="emoroco-text" type="text" autocomplete="off" list="emotions-list">
             <a class="btn emoroco-add">Add</a>
             <a class="btn emoroco-focus">Focus</a>
             <a class="btn emoroco-remove">Remove</a>
@@ -498,7 +498,7 @@
               class="disable-shortcuts"
               type="text"
               autocomplete="off"
-            />
+>
 
             <a id="controls-show-hide-alphabet" class="btn">Show Alphabet</a>
           </form>
