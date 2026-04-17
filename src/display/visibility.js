@@ -4,7 +4,7 @@ const display = window.display;
 
 function getVisibility(target) {
   if (target === "alphabet") {
-    return document.getElementById("alphabet")?.classList.contains("initial") ? "hidden" : "visible";
+    return document.getElementById("alphabet-wrap")?.classList.contains("initial") ? "hidden" : "visible";
   }
 
   const el = document.getElementById(target);

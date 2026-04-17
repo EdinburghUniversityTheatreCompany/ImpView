@@ -53,7 +53,11 @@
 
     <div class="content">
       <div class="center">
-        <ul id="alphabet" class="alphabet initial animate">
+        <!-- Wrapper owns the show/hide fade so the .alphabet itself never has
+             a transition running on it — Firefox flattens 3D subtrees during
+             transitions and would "snap" into the ring at the end otherwise. -->
+        <div id="alphabet-wrap" class="initial animate">
+        <ul id="alphabet" class="alphabet">
           <li>A</li>
           <li>B</li>
           <li>C</li>
@@ -81,6 +85,7 @@
           <li>Y</li>
           <li>Z</li>
         </ul>
+        </div>
       </div>
     </div>
   </body>

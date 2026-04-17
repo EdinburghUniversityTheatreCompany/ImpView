@@ -4,8 +4,7 @@ const display = window.display;
 
 const LETTER_OFFSET = 13.85;
 
-let currentRotation = 0;
-let currentLetter   = "a";
+let currentLetter = "a";
 
 const messageHandlers = display.messageHandlers;
 
@@ -13,17 +12,18 @@ messageHandlers.push((message) => {
   if (message.type !== "control" || message.target !== "alphabet") return;
 
   const target = message.target;
-  const target$ = $('#' + target);
+  // `initial` now lives on the wrapper (so fading the wrapper doesn't drag
+  // the 3D subtree into a flattened compositor layer). Everything that used
+  // to toggle .initial on #alphabet now toggles it on #alphabet-wrap.
+  const wrap$ = $('#alphabet-wrap');
 
   switch (message.action) {
     case "show":
-      target$.removeClass("initial");
+      wrap$.removeClass("initial");
       display.sendVisibility(target);
       break;
     case "hide":
-      target$.css("-webkit-transform", "");
-      target$.css("transform", "");
-      target$.addClass("initial");
+      wrap$.addClass("initial");
       display.sendVisibility(target);
       break;
     case "setStart":
@@ -61,7 +61,5 @@ function setRotation(rotation) {
   const el = document.getElementById('alphabet');
   if (el) {
     el.style.transform = `rotateX(13deg) rotateY(${rotation}deg)`;
-    el.style.webkitTransform = `rotateX(13deg) rotateY(${rotation}deg)`;
   }
-  currentRotation = rotation;
 }

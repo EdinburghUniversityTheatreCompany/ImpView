@@ -56,18 +56,24 @@ body {
 }
 
 /* ─── Layout ─── */
+// `display: table-cell` (the original approach) creates a flattening context
+// that overrides `transform-style: preserve-3d` on descendants — the alphabet
+// ring would collapse to a 2D diagonal line during its transition, only
+// snapping into 3D after the transition ended. Flexbox centering avoids this.
 .content {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  display: table;
+  display: flex;
 }
 
 .center {
-  display: table-cell;
-  vertical-align: middle;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 }
 
@@ -134,6 +140,12 @@ body {
 }
 
 /* ─── Alphabet ─── */
+// Perspective is still useful so the 3D ring has depth once visible, but we
+// now fade-in on show instead of rotating the whole ring into place — the
+// rotation animation was brittle across browsers during the migration and the
+// fade reads just as well.
+.center { perspective: 1500px; }
+
 .alphabet {
   list-style: none;
   display: inline-block;
@@ -164,16 +176,15 @@ body {
   }
 }
 
-.alphabet.initial {
-  opacity: 0;
-  transform: rotateX(-90deg) rotateZ(-90deg);
-}
+// Fade happens on the WRAPPER, not on the alphabet itself — Firefox flattens
+// 3D subtrees during transitions, so fading the 3D element directly causes a
+// "snap into ring" at the end of the fade. Keeping the .alphabet's 3D layer
+// static (always opacity 1) sidesteps that.
+#alphabet-wrap.initial { opacity: 0; }
 
-.alphabet.animate {
-  transition: all 2s;
+#alphabet-wrap.animate { transition: opacity 1s; }
 
-  li { transition: all 2s; }
-}
+.alphabet li { transition: transform 0.5s; }
 
 /* ═══════════════════════════════════════════════════════
    ANIMATIONS — unprefixed only (modern Chrome)
