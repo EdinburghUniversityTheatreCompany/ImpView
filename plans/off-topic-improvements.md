@@ -37,6 +37,22 @@ mirror jQuery — if called with no argument, dispatch a `new Event('keyup')` on
 node. Same applies to `.click()` (already works via the native `.click()` method on
 DOM elements, so may be fine).
 
+## src/control/animation.js — `before` field is dead data
+
+The control sends `before: btn$.data("before")` in `animate` messages, but the
+display-side `display/animate.js` never reads `message.before` — only `value`,
+`byLetter`, and `after`. The new typed protocol keeps the field optional for
+back-compat, but it can be removed from both sides.
+
+## src/control/errorCatcher.js — feature-level errors are unhandled
+
+The control-side error handler only matches `target === "window"`. Display
+modules (video, image) send `{ type: "error", target: "video" / "image",
+value: msg, callback: true }` which the control silently drops. Either:
+(a) widen the handler to surface feature errors via the same modal, or
+(b) display them inline beside the relevant control. The typed protocol
+unifies the field name to `msg` (was `value`), which makes (a) trivial.
+
 ## src/control/spellCheck.js — AfterTheDeadline service
 
 The spellcheck uses `http://service.afterthedeadline.com/` which may have CORS
