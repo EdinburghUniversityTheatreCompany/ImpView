@@ -250,7 +250,7 @@ body {
 /* ─── Spin ─── */
 .spin {
   animation-name: spin;
-  animation-duration: 0.5s !important;
+  animation-duration: 0.5s;
   animation-timing-function: linear;
 }
 .spinY {
@@ -302,11 +302,9 @@ body {
 
 /* ─── Flip ─── */
 .flipInY {
-  backface-visibility: visible !important;
   animation-name: flipInY;
 }
 .flipOutY {
-  backface-visibility: visible !important;
   animation-name: flipOutY;
 }
 .flipUp {
