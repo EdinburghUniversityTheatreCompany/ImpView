@@ -6,9 +6,18 @@ const messageHandlers = control.messageHandlers;
 const callbackHandlers = control.callbackHandlers;
 
 control.onReadys.push(() => {
-  window.addEventListener("message", (event) => {
-    handleMessage(event.data, event.source);
-  }, false);
+  window.addEventListener(
+    "message",
+    (event) => {
+      // Only accept messages from our own origin, and only from the display
+      // popup we opened. Guards against a stray window.postMessage from another
+      // tab or extension reaching the control window.
+      if (event.origin !== window.location.origin) return;
+      if (event.source !== control.display) return;
+      handleMessage(event.data, event.source);
+    },
+    false
+  );
 });
 
 control.sendMessage = (messageData) => {

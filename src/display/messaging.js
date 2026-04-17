@@ -5,9 +5,17 @@ const messageHandlers = display.messageHandlers;
 const callbackHandlers = display.callbackHandlers;
 
 display.onReadys.push(() => {
-  window.addEventListener("message", (event) => {
-    handleMessage(event.data, event.source);
-  }, false);
+  window.addEventListener(
+    "message",
+    (event) => {
+      // Only accept messages from our own origin, and only from the controller
+      // window that opened this popup. Guards against stray postMessage calls.
+      if (event.origin !== window.location.origin) return;
+      if (event.source !== display.controller) return;
+      handleMessage(event.data);
+    },
+    false
+  );
 });
 
 display.sendMessage = (messageData) => {
