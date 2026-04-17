@@ -97,9 +97,27 @@ function wrap(nodes) {
       nodes.forEach(n => n.removeEventListener(event, handler));
       return w;
     },
-    click(handler) { return w.on('click', handler); },
-    keydown(handler) { return w.on('keydown', handler); },
-    keyup(handler) { return w.on('keyup', handler); },
+    click(handler) {
+      if (handler === undefined) {
+        nodes.forEach(n => n.click ? n.click() : n.dispatchEvent(new Event('click')));
+        return w;
+      }
+      return w.on('click', handler);
+    },
+    keydown(handler) {
+      if (handler === undefined) {
+        nodes.forEach(n => n.dispatchEvent(new Event('keydown')));
+        return w;
+      }
+      return w.on('keydown', handler);
+    },
+    keyup(handler) {
+      if (handler === undefined) {
+        nodes.forEach(n => n.dispatchEvent(new Event('keyup')));
+        return w;
+      }
+      return w.on('keyup', handler);
+    },
     change(handler) {
       if (handler === undefined) {
         nodes.forEach(n => n.dispatchEvent(new Event('change')));
