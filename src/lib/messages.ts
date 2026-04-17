@@ -145,12 +145,42 @@ type PayloadFor<T extends Target, A extends string> = Omit<
   "type" | "target" | "action"
 >;
 
-// Minimal global typings — the rest of `window.control` / `window.display`
-// is set up in globals.js / messaging.js and stays untyped (any) for now.
+// Global typings for the window.control / window.display namespaces. The
+// arrays + sendMessage are created by globals.js + messaging.ts; everything
+// else is feature-specific and stays untyped (loose index signature).
+type MessageHandler = (m: AnyMessage) => void;
+
+export interface ControlNamespace {
+  sendMessage: (m: AnyMessage) => void;
+  onReadys: Array<() => void>;
+  messageHandlers: MessageHandler[];
+  callbackHandlers: MessageHandler[];
+  clickHandlers: Array<() => void>;
+  stateHandlers: Array<() => void>;
+  display: Window | null;
+  showError: (msg: string, url: string, line: string, trace: string) => void;
+  [key: string]: unknown;
+}
+
+export interface DisplayNamespace {
+  sendMessage: (m: AnyMessage) => void;
+  onReadys: Array<() => void>;
+  messageHandlers: MessageHandler[];
+  callbackHandlers: MessageHandler[];
+  controller: Window | null;
+  sendError: (msg: string, url: string, line: string | number, trace: string) => void;
+  sendVisibility: (target: Target) => void;
+  registerTarget: <T extends Target>(
+    target: T,
+    handler: (m: Extract<ControlMessage, { target: T }>) => void
+  ) => void;
+  [key: string]: unknown;
+}
+
 declare global {
   interface Window {
-    control: { sendMessage: (m: AnyMessage) => void } & Record<string, unknown>;
-    display: { sendMessage: (m: AnyMessage) => void } & Record<string, unknown>;
+    control: ControlNamespace;
+    display: DisplayNamespace;
   }
 }
 

@@ -1,5 +1,6 @@
 import { $ } from "../lib/dom.js";
 import { FADE_MS } from "../lib/timings.js";
+import type { AnyMessage } from "../lib/messages.ts";
 
 const control = window.control;
 
@@ -15,7 +16,7 @@ control.onReadys.push(() => {
       // tab or extension reaching the control window.
       if (event.origin !== window.location.origin) return;
       if (event.source !== control.display) return;
-      handleMessage(event.data, event.source);
+      handleMessage(event.data);
     },
     false
   );
@@ -43,18 +44,18 @@ control.sendMessage = (messageData) => {
   control.display.postMessage(msg, window.location.origin);
 };
 
-function handleMessage(data) {
+function handleMessage(data: unknown) {
   try {
-    let message;
+    let message: AnyMessage;
     if (typeof data === "string") {
-      message = JSON.parse(data);
+      message = JSON.parse(data) as AnyMessage;
     } else {
-      message = data;
+      message = data as AnyMessage;
     }
 
     console.log("received message: ", data);
 
-    if (message.callback) {
+    if ("callback" in message && message.callback) {
       callbackHandlers.forEach((item) => item(message));
       return;
     } else {
@@ -62,19 +63,17 @@ function handleMessage(data) {
       return;
     }
   } catch (e) {
-    control.showError(e.message, "", "", e.stack);
+    const err = e as Error;
+    control.showError(err.message, "", "", err.stack ?? "");
   }
 }
 
 messageHandlers.push((message) => {
-  switch (message.type) {
-    case "hello":
-      displayDisconnectedReported = false;
-      $("#loader").fadeOut(FADE_MS, () => {
-        $("#loader").remove();
-        $("#controls").fadeIn();
-      });
-      control.sendMessage({ type: "hello", callback: true });
-      break;
-  }
+  if (message.type !== "hello") return;
+  displayDisconnectedReported = false;
+  $("#loader").fadeOut(FADE_MS, () => {
+    $("#loader").remove();
+    $("#controls").fadeIn();
+  });
+  control.sendMessage({ type: "hello", callback: true });
 });

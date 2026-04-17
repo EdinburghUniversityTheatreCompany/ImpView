@@ -55,7 +55,4 @@ unifies the field name to `msg` (was `value`), which makes (a) trivial.
 
 ## src/control/spellCheck.js — AfterTheDeadline service
 
-The spellcheck uses `http://service.afterthedeadline.com/` which may have CORS
-restrictions from a Vite dev server origin. In production (served from a real domain)
-it should work, but in dev (localhost:5173) it will likely be blocked unless the
-service supports the local origin. Low priority since spellcheck is an optional UX.
+The spellcheck uses `http://service.afterthedeadline.com/` which is no longer used. Need to fix this
