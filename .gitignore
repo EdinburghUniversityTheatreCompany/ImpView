@@ -14,3 +14,7 @@
 /.sass-cache
 
 *.crx
+
+node_modules/
+dist/
+.vite/

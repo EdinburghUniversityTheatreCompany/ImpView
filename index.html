@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ImpView Control</title>
+
+    <link rel="stylesheet" href="/src/styles/control.scss">
+
+    <script type="module" src="/src/control/main.js"></script>
+  </head>
+
+  <body>
+    <div class="container">
+
+      <div id="loader">
+        <button type="button" id="start_display_button">Start Display</button>
+        ImpView is loading...
+      </div>
+
+      <div id="quick-controls" class="control-group">
+        <a id="quick-hide-all" class="btn">Hide All</a>
+        <a id="quick-fade-all" class="btn">Fade Out All</a>
+      </div>
+
+      <div class="states">
+        <input type="hidden" id="i-state" value="hidden">
+        <input type="hidden" id="text-state" value="hidden">
+        <input type="hidden" id="image-state" value="hidden">
+        <input type="hidden" id="video-state" value="hidden">
+        <input type="hidden" id="video-play-state" value="hidden">
+        <input type="hidden" id="alphabet-state" value="hidden">
+      </div>
+
+      <div id="controls" style="display: none">
+        <div class="control-group" data-shortcut="1">
+          <h3 class="group-header">i</h3>
+
+          <p>
+            <a id="controls-show-hide-i" class="btn">Show i</a>
+            <a id="controls-fade-i" class="btn">Fade i In</a>
+          </p>
+
+          <h3 class="group-header">Attention</h3>
+
+          <p>
+            <a class="btn animate-control" data-shortcut="q" data-target="i" data-animation="swing" >Swing i</a>
+            <a class="btn animate-control" data-shortcut="w" data-target="i" data-animation="bounce">Bounce i</a>
+            <a class="btn animate-control" data-shortcut="e" data-target="i" data-animation="wiggle">Wiggle i</a>
+            <a class="btn animate-control" data-shortcut="r" data-target="i" data-animation="spin"  >Spin i</a>
+            <a class="btn animate-control" data-shortcut="t" data-target="i" data-animation="spinY" >SpinY i</a>
+            <a class="btn animate-control" data-shortcut="y" data-target="i" data-animation="pulse" >Pulse i</a>
+          </p>
+          <p>
+            <a class="btn toggle-class" data-target="i" data-animation="colourChase">i Colour Chase</a>
+		<a class="btn toggle-class" data-target="i" data-animation="moveAbout">i 3d Motion</a>
+          </p>
+
+          <h3 class="group-header">Animate In</h3>
+
+          <p>
+            <a class="btn animate-control" data-shortcut="a" data-target="i" data-animation="growIn"       >Grow In i</a>
+            <a class="btn animate-control" data-shortcut="s" data-target="i" data-animation="growSpinIn"   >Grow Spin In i</a>
+            <a class="btn animate-control" data-shortcut="d" data-target="i" data-animation="flipInY"      >Flip In i</a>
+            <a class="btn animate-control" data-shortcut="f" data-target="i" data-animation="bounceInLeft" >Bounce In i</a>
+            <a class="btn animate-control" data-shortcut="g" data-target="i" data-animation="bounceInUp"   >Bounce Up i</a>
+            <a class="btn animate-control" data-shortcut="h" data-target="i" data-animation="rotateInDownLeft" >Rotate In i</a>
+            <a class="btn animate-control" data-shortcut="j" data-target="i" data-animation="rollIn"       >Roll In i</a>
+            <a class="btn animate-control" data-shortcut="k" data-target="i" data-animation="flipUp"       >Flip Up i</a>
+            <a class="btn animate-control" data-shortcut="l" data-target="i" data-animation="blurIn"       >Blur In i</a>
+          </p>
+
+          <h3 class="group-header">Animate Out</h3>
+
+          <p>
+            <a class="btn animate-control" data-shortcut="z" data-target="i" data-animation="shrinkOut"        data-after="hide">Shrink Out i</a>
+            <a class="btn animate-control" data-shortcut="x" data-target="i" data-animation="shrinkSpinOut"    data-after="hide">Shrink Spin Out i</a>
+            <a class="btn animate-control" data-shortcut="c" data-target="i" data-animation="flipOutY"         data-after="hide">Flip Out i</a>
+            <a class="btn animate-control" data-shortcut="v" data-target="i" data-animation="bounceOutRight"   data-after="hide">Bounce Out i</a>
+            <a class="btn animate-control" data-shortcut="b" data-target="i" data-animation="bounceOutDown"    data-after="hide">Bounce Down i</a>
+            <a class="btn animate-control" data-shortcut="n" data-target="i" data-animation="rotateOutUpRight" data-after="hide" >Rotate Out i</a>
+            <a class="btn animate-control" data-shortcut="m" data-target="i" data-animation="rollOut"          data-after="hide">Roll Out i</a>
+            <a class="btn animate-control" data-shortcut="," data-target="i" data-animation="flipDown"         data-after="hide">Flip Down i</a>
+            <a class="btn animate-control" data-shortcut="." data-target="i" data-animation="blurOut"          data-after="hide">Blur Out i</a>
+            <a class="btn animate-control" data-shortcut="/" data-target="i" data-animation="hinge"            data-after="hide">Hinge Out i</a>
+          </p>
+        </div>
+        <div class="control-group" data-shortcut="2">
+          <h3 class="group-header">Text</h3>
+
+          <form class="form-inline">
+            <input id="text-input" class="disable-shortcuts" type="text" autocomplete="off" />
+
+            <a id="controls-show-hide-text" class="btn">Show Text</a>
+            <a id="controls-fade-text" class="btn">Fade In Text</a>
+
+            <a id="controls-spellcheck-text" class="btn">Spellcheck</a>
+
+            <input id="text-color" type="color" value="#ffffff" class="input-small" />
+          </form>
+
+          <h3 class="group-header">Animate In</h3>
+
+          <p>
+            <a class="btn animate-control" data-shortcut="a" data-target="text" data-animation="growIn"        data-by-letter="true">Grow In By Letter</a>
+            <a class="btn animate-control" data-shortcut="s" data-target="text" data-animation="fadeIn"        data-by-letter="true">Fade In By Letter</a>
+            <a class="btn animate-control" data-shortcut="d" data-target="text" data-animation="flipInY"       data-by-letter="true">Flip In By Letter</a>
+            <a class="btn animate-control" data-shortcut="f" data-target="text" data-animation="flipUp"        data-by-letter="true">Flip Up By Letter</a>
+            <a class="btn animate-control" data-shortcut="g" data-target="text" data-animation="bounceInRight" data-by-letter="true">Bounce In By Letter</a>
+            <a class="btn animate-control" data-shortcut="h" data-target="text" data-animation="rollIn"        data-by-letter="true">Roll In By Letter</a>
+            <a class="btn animate-control" data-shortcut="j" data-target="text" data-animation="blurIn"        data-by-letter="true">Blur In By Letter</a>
+          </p>
+
+          <h3 class="group-header">Animate Out</h3>
+
+          <p>
+            <a class="btn animate-control" data-shortcut="z" data-target="text" data-animation="shrinkOut"     data-after="hide" data-by-letter="true">Shrink Out By Letter</a>
+            <a class="btn animate-control" data-shortcut="x" data-target="text" data-animation="fadeOut"       data-after="hide" data-by-letter="true">Fade Out By Letter</a>
+            <a class="btn animate-control" data-shortcut="c" data-target="text" data-animation="flipOutY"      data-after="hide" data-by-letter="true">Flip Out By Letter</a>
+            <a class="btn animate-control" data-shortcut="v" data-target="text" data-animation="flipDown"      data-after="hide" data-by-letter="true">Flip Down By Letter</a>
+            <a class="btn animate-control" data-shortcut="b" data-target="text" data-animation="bounceOutLeft" data-after="hide" data-by-letter="true">Bounce Out By Letter</a>
+            <a class="btn animate-control" data-shortcut="n" data-target="text" data-animation="rollOut"       data-after="hide" data-by-letter="true">Roll Out By Letter</a>
+            <a class="btn animate-control" data-shortcut="m" data-target="text" data-animation="blurOut"       data-after="hide" data-by-letter="true">Blur Out By Letter</a>
+          </p>
+        </div>
+        <div class="control-group" data-shortcut="3">
+          <h3 class="group-header">Image</h3>
+
+          <form class="form-inline">
+            <input id="image-input" type="text" />
+            <input id="image-file" type="file" />
+            <span id="controls-image-loader"></span>
+          </form>
+
+          <p>
+            <a data-shortcut="q" id="controls-show-hide-image" class="btn">Show Image</a>
+            <a data-shortcut="w" id="controls-fade-image"      class="btn">Fade In Image</a>
+          </p>
+
+          <p class="preset-images">
+            <a data-shortcut="a"><img src="content/Die.png"              /></a>
+            <a data-shortcut="s"><img src="content/beach.jpg"            /></a>
+            <a data-shortcut="d"><img src="content/CustomsEndowment.jpg" /></a>
+            <a data-shortcut="f"><img src="content/Daleks.png"           /></a>
+          </p>
+        </div>
+        <div class="control-group" data-shortcut="4">
+          <h3 class="group-header">Video</h3>
+
+          <form class="form-inline">
+            <input id="video-input" type="text" />
+            <input id="video-file" type="file" />
+            <span id="controls-video-loader"></span>
+          </form>
+
+          <p>
+            <a id="controls-show-hide-video" data-shortcut="q" class="btn">Show Video</a>
+            <a id="controls-fade-video"      data-shortcut="w" class="btn">Fade In Video</a>
+            <a id="controls-play-video"      data-shortcut="e" class="btn">Play Video</a>
+            <a id="controls-restart-video"   data-shortcut="r" class="btn">Restart Video</a>
+          </p>
+
+          <p>
+            <a id="controls-show-play-video"    data-shortcut="t" class="btn">Show and Play Video</a>
+            <a id="controls-hide-restart-video" data-shortcut="y" class="btn">Hide and Restart Video</a>
+          </p>
+
+          <p class="preset-videos">
+            <a data-shortcut="a"><video src="content/Vortex.mp4"       /></a>
+            <a data-shortcut="s"><video src="content/NewsNight.mp4"    /></a>
+            <a data-shortcut="d"><video src="content/QuestionTime.mp4" /></a>
+            <a data-shortcut="f"><video src="content/bbcnews.webm"     /></a>
+            <a data-shortcut="g"><video src="content/itvnews.webm"     /></a>
+            <a data-shortcut="h"><video src="content/BBCOlympics.webm" /></a>
+          </p>
+        </div>
+        <div class="control-group" data-shortcut="5">
+          <h3 class="group-header">Credits</h3>
+
+          <p>
+            <a data-shortcut="q" id="controls-roll-credits" class="btn">Roll Credits</a>
+            <a data-shortcut="w" id="controls-hide-credits" class="btn">Hide Credits</a>
+          </p>
+
+          <textarea id="credits-editor" class="disable-shortcuts"></textarea>
+        </div>
+        <div class="emoroco-group control-group" data-shortcut="6">
+          <h3 class="group-header">Emoroco</h3>
+
+          <p>
+            <a id="emoroco-remove-all" class="btn">Remove All</a>
+          </p>
+
+          <form class="form-inline emoroco-entry" data-id="0">
+            <input class="emoroco-text" type="text" autocomplete="off" />
+            <a class="btn emoroco-focus">Focus</a>
+            <a class="btn emoroco-remove">Remove</a>
+          </form>
+        </div>
+        <div class="control-group" data-shortcut="7">
+          <h3 class="group-header">Alphabet</h3>
+
+          <form class="form-inline">
+            <input id="set-start-alphabet" class="disable-shortcuts" type="text" autocomplete="off" />
+
+            <a id="controls-show-hide-alphabet" class="btn">Show Alphabet</a>
+          </form>
+
+          <p>
+            <a id="controls-next-alphabet" class="btn">Next</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
