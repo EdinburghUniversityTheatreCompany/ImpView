@@ -17,7 +17,7 @@ control.showError = (msg, url, line, trace) => {
     bodyHtml: `
       <p>
         *Please* report this
-        <a href="http://redmine.haydenball.me.uk/projects/impview/issues/new">here</a>.
+        <a href="https://github.com/EdinburghUniversityTheatreCompany/ImpView/issues">here</a>.
         Don't forget to include your browser version and all of the details below. Thanks.
       </p>
       <hr />
