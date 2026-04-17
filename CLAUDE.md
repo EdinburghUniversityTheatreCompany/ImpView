@@ -11,7 +11,7 @@ Originally Middleman 3.0.11 + Ruby 2.5 + CoffeeScript + jQuery 1.9 + Bootstrap-s
 ## Commands
 
 ```bash
-npm install         # install JS deps (Node 20, see .nvmrc)
+npm install         # install JS deps (Node 24, see .nvmrc)
 npm run dev         # Vite dev server at http://localhost:5173
 npm run build       # build to ./dist/
 npm run preview     # serve ./dist/ locally
