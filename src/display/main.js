@@ -3,7 +3,7 @@
 //   globals first (creates window.display), messaging second, rest alphabetically.
 
 import "./globals.js";
-import "./messaging.js";
+import "./messaging.ts";
 
 // Remaining modules alphabetically:
 import "./activation.js";
