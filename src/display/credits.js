@@ -28,6 +28,17 @@ function renderCredits(markdown) {
 const display = window.display;
 const messageHandlers = display.messageHandlers;
 
+// One active roll at a time. Cleared before each new roll (or when the
+// credits value is replaced) so we never orphan a poller that keeps
+// running against stale children.
+let progressInterval = null;
+function stopRoll() {
+  if (progressInterval !== null) {
+    clearInterval(progressInterval);
+    progressInterval = null;
+  }
+}
+
 messageHandlers.push((message) => {
   if (message.type !== "control" || message.target !== "credits") return;
 
@@ -36,10 +47,12 @@ messageHandlers.push((message) => {
 
   switch (message.action) {
     case "setValue": {
+      stopRoll();
       target$.html(renderCredits(message.value));
       break;
     }
     case "roll": {
+      stopRoll();
       const windowHeight = document.body.scrollHeight;
 
       const height = target$.get(0).offsetHeight;
@@ -66,7 +79,7 @@ messageHandlers.push((message) => {
         });
       });
 
-      let progressInterval = setInterval(() => {
+      progressInterval = setInterval(() => {
         children.forEach((child) => {
           const childTop = child.getBoundingClientRect().top;
           if (childTop < windowHeight - triggerHeight && child.style.opacity === "0") {
@@ -78,7 +91,7 @@ messageHandlers.push((message) => {
       el.addEventListener(
         "transitionend",
         () => {
-          clearInterval(progressInterval);
+          stopRoll();
           target$.hide();
           el.style.transition = "";
         },
