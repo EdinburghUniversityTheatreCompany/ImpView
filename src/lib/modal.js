@@ -4,11 +4,11 @@
  * Creates a backdrop + modal, auto-dismisses on Close / backdrop click / ESC.
  */
 export function showModal({ title, bodyHtml, size }) {
-  const backdrop = document.createElement('div');
-  backdrop.className = 'modal-backdrop';
+  const backdrop = document.createElement("div");
+  backdrop.className = "modal-backdrop";
 
-  const modal = document.createElement('div');
-  modal.className = 'modal' + (size === 'wide' ? ' modal-wide' : '');
+  const modal = document.createElement("div");
+  modal.className = "modal" + (size === "wide" ? " modal-wide" : "");
   modal.innerHTML = `
     <div class="modal-header">
       <h3>${title}</h3>
@@ -23,20 +23,20 @@ export function showModal({ title, bodyHtml, size }) {
   function dismiss() {
     backdrop.remove();
     modal.remove();
-    document.removeEventListener('keydown', onKeyDown);
+    document.removeEventListener("keydown", onKeyDown);
   }
 
   function onKeyDown(e) {
-    if (e.key === 'Escape') dismiss();
+    if (e.key === "Escape") dismiss();
   }
 
-  backdrop.addEventListener('click', dismiss);
-  modal.querySelector('.close').addEventListener('click', dismiss);
-  modal.querySelector('.close-modal').addEventListener('click', (e) => {
+  backdrop.addEventListener("click", dismiss);
+  modal.querySelector(".close").addEventListener("click", dismiss);
+  modal.querySelector(".close-modal").addEventListener("click", (e) => {
     e.preventDefault();
     dismiss();
   });
-  document.addEventListener('keydown', onKeyDown);
+  document.addEventListener("keydown", onKeyDown);
 
   document.body.appendChild(backdrop);
   document.body.appendChild(modal);
@@ -46,13 +46,19 @@ export function showModal({ title, bodyHtml, size }) {
  * confirmModal({ title, bodyHtml, confirmText, cancelText, danger })
  * Promise-based confirm. Resolves true on confirm, false on cancel/dismiss.
  */
-export function confirmModal({ title, bodyHtml, confirmText = 'Confirm', cancelText = 'Cancel', danger = false }) {
+export function confirmModal({
+  title,
+  bodyHtml,
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  danger = false,
+}) {
   return new Promise((resolve) => {
-    const backdrop = document.createElement('div');
-    backdrop.className = 'modal-backdrop';
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
 
-    const modal = document.createElement('div');
-    modal.className = 'modal';
+    const modal = document.createElement("div");
+    modal.className = "modal";
     modal.innerHTML = `
       <div class="modal-header">
         <h3>${title}</h3>
@@ -61,7 +67,7 @@ export function confirmModal({ title, bodyHtml, confirmText = 'Confirm', cancelT
       <div class="modal-body">${bodyHtml}</div>
       <div class="modal-footer">
         <a href="#" class="btn cancel-modal">${cancelText}</a>
-        <a href="#" class="btn confirm-modal${danger ? ' danger' : ''}">${confirmText}</a>
+        <a href="#" class="btn confirm-modal${danger ? " danger" : ""}">${confirmText}</a>
       </div>
     `;
 
@@ -71,26 +77,26 @@ export function confirmModal({ title, bodyHtml, confirmText = 'Confirm', cancelT
       settled = true;
       backdrop.remove();
       modal.remove();
-      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener("keydown", onKeyDown);
       resolve(result);
     }
 
     function onKeyDown(e) {
-      if (e.key === 'Escape') finish(false);
-      if (e.key === 'Enter') finish(true);
+      if (e.key === "Escape") finish(false);
+      if (e.key === "Enter") finish(true);
     }
 
-    backdrop.addEventListener('click', () => finish(false));
-    modal.querySelector('.close').addEventListener('click', () => finish(false));
-    modal.querySelector('.cancel-modal').addEventListener('click', (e) => {
+    backdrop.addEventListener("click", () => finish(false));
+    modal.querySelector(".close").addEventListener("click", () => finish(false));
+    modal.querySelector(".cancel-modal").addEventListener("click", (e) => {
       e.preventDefault();
       finish(false);
     });
-    modal.querySelector('.confirm-modal').addEventListener('click', (e) => {
+    modal.querySelector(".confirm-modal").addEventListener("click", (e) => {
       e.preventDefault();
       finish(true);
     });
-    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener("keydown", onKeyDown);
 
     document.body.appendChild(backdrop);
     document.body.appendChild(modal);

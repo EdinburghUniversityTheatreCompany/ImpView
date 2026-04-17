@@ -7,7 +7,7 @@ messageHandlers.push((message) => {
   if (message.type !== "control") return;
 
   const target = message.target;
-  const target$ = $('#' + target);
+  const target$ = $("#" + target);
 
   // Alphabet handles show/hide itself.
   if (target === "alphabet") return;

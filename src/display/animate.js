@@ -24,7 +24,7 @@ display.animate = (message, target, target$) => {
     const wordsHtml = "<div class='word'>" + words.join("</div><div class='word'>") + "</div>";
     target$.html(wordsHtml);
 
-    if (!target$.get(0) || getComputedStyle(target$.get(0)).display === 'none') {
+    if (!target$.get(0) || getComputedStyle(target$.get(0)).display === "none") {
       target$.find(".word > div").css("visibility", "hidden");
       target$.show();
     }
@@ -33,13 +33,13 @@ display.animate = (message, target, target$) => {
       const item$ = $(item);
 
       // Reset
-      item$.off('animationend');
-      item$.off('webkitAnimationEnd');
+      item$.off("animationend");
+      item$.off("webkitAnimationEnd");
       item$.removeClass();
 
       const onAnimEnd = () => {
-        item$.off('animationend', onAnimEnd);
-        item$.off('webkitAnimationEnd', onAnimEnd);
+        item$.off("animationend", onAnimEnd);
+        item$.off("webkitAnimationEnd", onAnimEnd);
         item$.removeClass();
 
         if (message.after === "hide") {
@@ -56,8 +56,8 @@ display.animate = (message, target, target$) => {
         }
       };
 
-      item$.on('animationend', onAnimEnd);
-      item$.on('webkitAnimationEnd', onAnimEnd);
+      item$.on("animationend", onAnimEnd);
+      item$.on("webkitAnimationEnd", onAnimEnd);
 
       setTimeout(() => {
         item$.addClass("animated");
@@ -68,13 +68,13 @@ display.animate = (message, target, target$) => {
     });
   } else {
     // Reset
-    target$.off('animationend');
-    target$.off('webkitAnimationEnd');
+    target$.off("animationend");
+    target$.off("webkitAnimationEnd");
     target$.removeClass();
 
     const onAnimEnd = () => {
-      target$.off('animationend', onAnimEnd);
-      target$.off('webkitAnimationEnd', onAnimEnd);
+      target$.off("animationend", onAnimEnd);
+      target$.off("webkitAnimationEnd", onAnimEnd);
       target$.removeClass();
 
       if (message.after === "hide") {
@@ -84,8 +84,8 @@ display.animate = (message, target, target$) => {
       display.sendVisibility(target);
     };
 
-    target$.on('animationend', onAnimEnd);
-    target$.on('webkitAnimationEnd', onAnimEnd);
+    target$.on("animationend", onAnimEnd);
+    target$.on("webkitAnimationEnd", onAnimEnd);
 
     target$.addClass("animated");
     target$.addClass(value);

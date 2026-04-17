@@ -15,7 +15,7 @@ messageHandlers.push((message) => {
   // `initial` now lives on the wrapper (so fading the wrapper doesn't drag
   // the 3D subtree into a flattened compositor layer). Everything that used
   // to toggle .initial on #alphabet now toggles it on #alphabet-wrap.
-  const wrap$ = $('#alphabet-wrap');
+  const wrap$ = $("#alphabet-wrap");
 
   switch (message.action) {
     case "show":
@@ -38,13 +38,12 @@ messageHandlers.push((message) => {
 function setLetter(letter) {
   currentLetter = letter.toLowerCase();
   const aIndex = 97;
-  const index  = currentLetter.charCodeAt(0) - aIndex;
+  const index = currentLetter.charCodeAt(0) - aIndex;
   const rotation = LETTER_OFFSET * index;
   setRotation(rotation);
 
-  $('#alphabet li').removeClass("current");
-  document.querySelector(`#alphabet li:nth-child(${index + 1})`)
-    ?.classList.add("current");
+  $("#alphabet li").removeClass("current");
+  document.querySelector(`#alphabet li:nth-child(${index + 1})`)?.classList.add("current");
 }
 
 function nextLetter() {
@@ -58,7 +57,7 @@ function nextLetter() {
 }
 
 function setRotation(rotation) {
-  const el = document.getElementById('alphabet');
+  const el = document.getElementById("alphabet");
   if (el) {
     el.style.transform = `rotateX(13deg) rotateY(${rotation}deg)`;
   }

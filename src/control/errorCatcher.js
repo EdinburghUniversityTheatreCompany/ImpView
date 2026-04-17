@@ -26,6 +26,6 @@ control.showError = (msg, url, line, trace) => {
       Trace:
       <pre>${trace}</pre>
       <p>Sorry.</p>
-    `
+    `,
   });
 };

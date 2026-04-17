@@ -2,7 +2,7 @@ import { $ } from "../lib/dom.js";
 
 const control = window.control;
 
-const messageHandlers  = control.messageHandlers;
+const messageHandlers = control.messageHandlers;
 const callbackHandlers = control.callbackHandlers;
 
 control.onReadys.push(() => {
@@ -42,9 +42,9 @@ function handleMessage(data) {
 messageHandlers.push((message) => {
   switch (message.type) {
     case "hello":
-      $('#loader').fadeOut(1000, () => {
-        $('#loader').remove();
-        $('#controls').fadeIn();
+      $("#loader").fadeOut(1000, () => {
+        $("#loader").remove();
+        $("#controls").fadeIn();
       });
       control.sendMessage({ type: "hello", callback: true });
       break;

@@ -18,7 +18,7 @@ control.onReadys.push(() => {
           flag.
         </p>
         <p>Don't shoot the messenger (blame CSP).</p>
-      `
+      `,
     });
   });
 });

@@ -26,7 +26,14 @@ export default [
     files: ["**/*.html"],
     plugins: { "@html-eslint": html },
     languageOptions: { parser: htmlParser },
-    rules: html.configs["flat/recommended"].rules,
+    rules: {
+      "@html-eslint/require-img-alt": "error",
+      "@html-eslint/require-lang": "error",
+      "@html-eslint/require-doctype": "error",
+      "@html-eslint/no-duplicate-id": "error",
+      "@html-eslint/no-duplicate-attrs": "error",
+      "@html-eslint/use-baseline": "warn",
+    },
   },
   prettier,
 ];

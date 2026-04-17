@@ -2,9 +2,9 @@
 // the same database on the same origin — each window keeps its own object-URL
 // cache so blobs don't cross the window boundary.
 
-const DB_NAME = 'impview-media';
+const DB_NAME = "impview-media";
 const DB_VERSION = 1;
-const STORE = 'media';
+const STORE = "media";
 export const MAX_FILE_BYTES = 500 * 1024 * 1024; // 500 MB
 
 let dbPromise = null;
@@ -18,9 +18,9 @@ function openDb() {
     req.onupgradeneeded = () => {
       const db = req.result;
       if (!db.objectStoreNames.contains(STORE)) {
-        const store = db.createObjectStore(STORE, { keyPath: 'id' });
-        store.createIndex('kind', 'kind');
-        store.createIndex('addedAt', 'addedAt');
+        const store = db.createObjectStore(STORE, { keyPath: "id" });
+        store.createIndex("kind", "kind");
+        store.createIndex("addedAt", "addedAt");
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -34,17 +34,27 @@ function tx(mode) {
 }
 
 function kindFromMime(mime) {
-  if (typeof mime !== 'string') return null;
-  if (mime.startsWith('image/')) return 'image';
-  if (mime.startsWith('video/')) return 'video';
+  if (typeof mime !== "string") return null;
+  if (mime.startsWith("image/")) return "image";
+  if (mime.startsWith("video/")) return "video";
   return null;
 }
 
 const EXT_MIME = {
-  jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif',
-  webp: 'image/webp', bmp: 'image/bmp', svg: 'image/svg+xml', avif: 'image/avif',
-  mp4: 'video/mp4', webm: 'video/webm', mov: 'video/quicktime', mkv: 'video/x-matroska',
-  m4v: 'video/mp4', ogv: 'video/ogg',
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  gif: "image/gif",
+  webp: "image/webp",
+  bmp: "image/bmp",
+  svg: "image/svg+xml",
+  avif: "image/avif",
+  mp4: "video/mp4",
+  webm: "video/webm",
+  mov: "video/quicktime",
+  mkv: "video/x-matroska",
+  m4v: "video/mp4",
+  ogv: "video/ogg",
 };
 
 export function mimeFromName(name) {
@@ -53,18 +63,22 @@ export function mimeFromName(name) {
 }
 
 async function sha256Hex(buffer) {
-  const digest = await crypto.subtle.digest('SHA-256', buffer);
+  const digest = await crypto.subtle.digest("SHA-256", buffer);
   const bytes = new Uint8Array(digest);
-  let hex = '';
+  let hex = "";
   for (let i = 0; i < bytes.length; i++) {
-    hex += bytes[i].toString(16).padStart(2, '0');
+    hex += bytes[i].toString(16).padStart(2, "0");
   }
   return hex;
 }
 
 function notify(event) {
   listeners.forEach((fn) => {
-    try { fn(event); } catch (e) { console.error('[mediaStore] listener error:', e); }
+    try {
+      fn(event);
+    } catch (e) {
+      console.error("[mediaStore] listener error:", e);
+    }
   });
 }
 
@@ -75,12 +89,14 @@ export function onChange(fn) {
 
 export async function addFile(file) {
   if (file.size > MAX_FILE_BYTES) {
-    throw new Error(`File too large (${(file.size / 1024 / 1024).toFixed(1)} MB, max ${MAX_FILE_BYTES / 1024 / 1024} MB)`);
+    throw new Error(
+      `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB, max ${MAX_FILE_BYTES / 1024 / 1024} MB)`
+    );
   }
   let mime = file.type || mimeFromName(file.name);
   const kind = kindFromMime(mime);
   if (!kind) {
-    throw new Error(`Unsupported file type: ${file.name} (${file.type || 'unknown'})`);
+    throw new Error(`Unsupported file type: ${file.name} (${file.type || "unknown"})`);
   }
 
   const buffer = await file.arrayBuffer();
@@ -102,19 +118,19 @@ export async function addFile(file) {
     blob,
   };
 
-  const store = await tx('readwrite');
+  const store = await tx("readwrite");
   await new Promise((resolve, reject) => {
     const req = store.add(record);
     req.onsuccess = () => resolve();
     req.onerror = () => reject(req.error);
   });
 
-  notify({ type: 'add', id, kind });
+  notify({ type: "add", id, kind });
   return { id, added: true, record };
 }
 
 export async function get(id) {
-  const store = await tx('readonly');
+  const store = await tx("readonly");
   return new Promise((resolve, reject) => {
     const req = store.get(id);
     req.onsuccess = () => resolve(req.result || null);
@@ -123,7 +139,7 @@ export async function get(id) {
 }
 
 export async function list(kind) {
-  const store = await tx('readonly');
+  const store = await tx("readonly");
   return new Promise((resolve, reject) => {
     const req = store.getAll();
     req.onsuccess = () => {
@@ -137,7 +153,7 @@ export async function list(kind) {
 }
 
 export async function remove(id) {
-  const store = await tx('readwrite');
+  const store = await tx("readwrite");
   await new Promise((resolve, reject) => {
     const req = store.delete(id);
     req.onsuccess = () => resolve();
@@ -148,11 +164,11 @@ export async function remove(id) {
     URL.revokeObjectURL(cached);
     urlCache.delete(id);
   }
-  notify({ type: 'remove', id });
+  notify({ type: "remove", id });
 }
 
 export async function clear() {
-  const store = await tx('readwrite');
+  const store = await tx("readwrite");
   await new Promise((resolve, reject) => {
     const req = store.clear();
     req.onsuccess = () => resolve();
@@ -160,7 +176,7 @@ export async function clear() {
   });
   for (const url of urlCache.values()) URL.revokeObjectURL(url);
   urlCache.clear();
-  notify({ type: 'clear' });
+  notify({ type: "clear" });
 }
 
 export async function objectUrlFor(id) {

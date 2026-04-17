@@ -11,7 +11,7 @@ messageHandlers.push((message) => {
   if (message.type !== "control" || message.target !== "video") return;
 
   const target = message.target;
-  const target$ = $('#' + target);
+  const target$ = $("#" + target);
 
   switch (message.action) {
     case "setOnEnd": {
@@ -20,14 +20,25 @@ messageHandlers.push((message) => {
     }
     case "setSource": {
       if (message.mediaId) {
-        mediaStore.objectUrlFor(message.mediaId)
+        mediaStore
+          .objectUrlFor(message.mediaId)
           .then((url) => {
             target$.attr("src", url);
-            display.sendMessage({ type: "control", target: "video", action: "setSource", callback: true });
+            display.sendMessage({
+              type: "control",
+              target: "video",
+              action: "setSource",
+              callback: true,
+            });
           })
           .catch((err) => {
-            console.error('[video] mediaStore lookup failed:', err);
-            display.sendMessage({ type: "error", target: "video", value: "Media not found in library", callback: true });
+            console.error("[video] mediaStore lookup failed:", err);
+            display.sendMessage({
+              type: "error",
+              target: "video",
+              value: "Media not found in library",
+              callback: true,
+            });
           });
         break;
       }
@@ -35,12 +46,20 @@ messageHandlers.push((message) => {
       const error = (status, detail) => {
         let msg;
         switch (status) {
-          case 404:   msg = "Video not found (404)"; break;
-          case 500:   msg = "Server-side error loading video (500)"; break;
-          case 0:     msg = `Network / CORS error loading video${detail ? ` (${detail})` : ''}`; break;
-          default:    msg = `Error loading video (status ${status}${detail ? `, ${detail}` : ''})`; break;
+          case 404:
+            msg = "Video not found (404)";
+            break;
+          case 500:
+            msg = "Server-side error loading video (500)";
+            break;
+          case 0:
+            msg = `Network / CORS error loading video${detail ? ` (${detail})` : ""}`;
+            break;
+          default:
+            msg = `Error loading video (status ${status}${detail ? `, ${detail}` : ""})`;
+            break;
         }
-        console.error('[video] setSource failed:', { url: message.value, status, detail });
+        console.error("[video] setSource failed:", { url: message.value, status, detail });
         display.sendMessage({ type: "error", target: "video", value: msg, callback: true });
       };
 
@@ -53,21 +72,26 @@ messageHandlers.push((message) => {
         if (e.target.status === 200 || e.target.status === 206) {
           const url = URL.createObjectURL(xhr.response);
           target$.attr("src", url);
-          display.sendMessage({ type: "control", target: "video", action: "setSource", callback: true });
+          display.sendMessage({
+            type: "control",
+            target: "video",
+            action: "setSource",
+            callback: true,
+          });
         } else {
           error(e.target.status, e.target.statusText);
         }
       };
       xhr.onerror = (e) => {
-        error(e.target.status || 0, 'network error');
+        error(e.target.status || 0, "network error");
       };
       xhr.send();
       break;
     }
     case "play": {
       const videoEl = target$.get(0);
-      target$.off('ended');
-      target$.on('ended', () => {
+      target$.off("ended");
+      target$.on("ended", () => {
         if (onEnd === "loop") {
           videoEl.currentTime = 0;
           videoEl.play().catch(() => {});
@@ -83,16 +107,21 @@ messageHandlers.push((message) => {
       // which doesn't count. Catch the rejection and tell the operator what
       // to do instead of leaving an unhandled promise.
       const playPromise = videoEl.play();
-      if (playPromise && typeof playPromise.catch === 'function') {
+      if (playPromise && typeof playPromise.catch === "function") {
         playPromise.catch((err) => {
-          console.error('[video] play() rejected:', err);
+          console.error("[video] play() rejected:", err);
           display.sendMessage({
             type: "error",
             target: "video",
             value: "Click the display window once to enable playback (browser autoplay policy)",
-            callback: true
+            callback: true,
           });
-          display.sendMessage({ type: "control", target: target, action: "paused", callback: true });
+          display.sendMessage({
+            type: "control",
+            target: target,
+            action: "paused",
+            callback: true,
+          });
         });
       }
       display.sendMessage({ type: "control", target: target, action: "playing", callback: true });
@@ -111,7 +140,7 @@ messageHandlers.push((message) => {
 });
 
 display.onReadys.push(() => {
-  const video = document.getElementById('video');
+  const video = document.getElementById("video");
   if (!video) return;
 
   video.onerror = () => {

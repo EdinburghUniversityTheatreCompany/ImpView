@@ -4,18 +4,18 @@
 const display = window.display;
 
 display.onReadys.push(() => {
-  const overlay = document.getElementById('activation-overlay');
+  const overlay = document.getElementById("activation-overlay");
   if (!overlay) return;
 
   const dismiss = () => {
-    overlay.classList.add('dismissed');
-    window.removeEventListener('click', dismiss, true);
-    window.removeEventListener('keydown', dismiss, true);
-    window.removeEventListener('touchstart', dismiss, true);
-    overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
+    overlay.classList.add("dismissed");
+    window.removeEventListener("click", dismiss, true);
+    window.removeEventListener("keydown", dismiss, true);
+    window.removeEventListener("touchstart", dismiss, true);
+    overlay.addEventListener("transitionend", () => overlay.remove(), { once: true });
   };
 
-  window.addEventListener('click', dismiss, true);
-  window.addEventListener('keydown', dismiss, true);
-  window.addEventListener('touchstart', dismiss, true);
+  window.addEventListener("click", dismiss, true);
+  window.addEventListener("keydown", dismiss, true);
+  window.addEventListener("touchstart", dismiss, true);
 });

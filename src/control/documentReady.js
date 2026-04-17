@@ -8,9 +8,9 @@ const onReadys = control.onReadys;
 ready(() => {
   try {
     const finish_setup = () => {
-      $('#loader').text("Waiting for display...");
+      $("#loader").text("Waiting for display...");
 
-      $('form').keydown((e) => {
+      $("form").keydown((e) => {
         if (e.keyCode === 13) {
           e.preventDefault();
           return false;
@@ -35,9 +35,9 @@ ready(() => {
       // `popup=yes` forces a new window rather than a tab. Size is a sensible
       // starting default; the operator usually spacebars to fullscreen anyway.
       control.display = window.open(
-        'display.html',
-        'ImpView Display',
-        'popup=yes,width=1280,height=720'
+        "display.html",
+        "ImpView Display",
+        "popup=yes,width=1280,height=720"
       );
       finish_setup();
     });

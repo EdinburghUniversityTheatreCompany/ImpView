@@ -27,47 +27,50 @@ control.callbackHandlers.push((message) => {
 
 function setFocusedId(id) {
   focusedId = id;
-  document.querySelectorAll('.emoroco-entry .emoroco-focus.active')
-    .forEach((b) => b.classList.remove('active'));
+  document
+    .querySelectorAll(".emoroco-entry .emoroco-focus.active")
+    .forEach((b) => b.classList.remove("active"));
   if (id !== null && emo_entries[id]) {
     const entry = emo_entries[id]._nodes[0];
-    const focusBtn = entry && entry.querySelector('.emoroco-focus');
-    if (focusBtn) focusBtn.classList.add('active');
+    const focusBtn = entry && entry.querySelector(".emoroco-focus");
+    if (focusBtn) focusBtn.classList.add("active");
   }
 }
 
 function createEntry(id) {
-  const wrap = document.createElement('div');
+  const wrap = document.createElement("div");
   wrap.innerHTML = templateHtml;
   const entry = wrap.firstElementChild;
   entry.dataset.id = id;
-  entry.classList.remove('committed');
-  entry.querySelectorAll('.active').forEach((el) => el.classList.remove('active'));
-  const input = entry.querySelector('input');
-  if (input) input.value = '';
+  entry.classList.remove("committed");
+  entry.querySelectorAll(".active").forEach((el) => el.classList.remove("active"));
+  const input = entry.querySelector("input");
+  if (input) input.value = "";
   return entry;
 }
 
 function commitEntry(entry$) {
   const entry = entry$._nodes[0];
   // Ignore commits on already-committed entries (double-click Add, Enter-after-Enter).
-  if (entry.classList.contains('committed')) return;
+  if (entry.classList.contains("committed")) return;
 
-  const input$ = entry$.find('.emoroco-text');
+  const input$ = entry$.find(".emoroco-text");
   const value = input$.val();
   if (!value) return;
 
   const id = Number(entry.dataset.id);
-  entry.classList.add('committed');
+  entry.classList.add("committed");
   emo_entries[id] = entry$;
 
   // Switch the input's keyup from "commit on Enter" to "live update on change"
-  input$.off('keyup');
-  input$.on('keyup', (e) => {
+  input$.off("keyup");
+  input$.on("keyup", (e) => {
     if (e.keyCode === 13) e.preventDefault();
     control.sendMessage({
-      type: "control", action: "emo-change",
-      value: input$.val(), id,
+      type: "control",
+      action: "emo-change",
+      value: input$.val(),
+      id,
     });
   });
 
@@ -75,37 +78,39 @@ function commitEntry(entry$) {
 
   // Append a fresh draft entry below
   const draft = createEntry(nextId++);
-  document.querySelector('.emoroco-group').appendChild(draft);
+  document.querySelector(".emoroco-group").appendChild(draft);
   addEmorocoHandlers($(draft));
-  const draftInput = draft.querySelector('input');
+  const draftInput = draft.querySelector("input");
   if (draftInput) draftInput.focus();
 }
 
 function addEmorocoHandlers(selector) {
-  const container = typeof selector === 'string' ? document.querySelector(selector) : selector._nodes[0];
+  const container =
+    typeof selector === "string" ? document.querySelector(selector) : selector._nodes[0];
   if (!container) return;
 
   // Block implicit form submission on Enter — the .emoroco-entry is a <form>
   // with a single text input, so Enter would otherwise reload the page before
   // our keyup handler fires.
-  const form = container.matches && container.matches('form') ? container : container.querySelector('form');
-  if (form) form.addEventListener('submit', (e) => e.preventDefault());
+  const form =
+    container.matches && container.matches("form") ? container : container.querySelector("form");
+  if (form) form.addEventListener("submit", (e) => e.preventDefault());
 
   const entry$ = $(container);
-  const input$ = entry$.find('.emoroco-text');
+  const input$ = entry$.find(".emoroco-text");
 
-  input$.on('keyup', (e) => {
+  input$.on("keyup", (e) => {
     if (e.keyCode !== 13) return;
     e.preventDefault();
     commitEntry(entry$);
   });
 
-  entry$.find('.emoroco-add').click((e) => {
+  entry$.find(".emoroco-add").click((e) => {
     e.preventDefault();
     commitEntry(entry$);
   });
 
-  entry$.find('.emoroco-focus').click((e) => {
+  entry$.find(".emoroco-focus").click((e) => {
     e.preventDefault();
     const id = Number(container.dataset.id);
     if (emo_entries[id] == null) return;
@@ -125,7 +130,7 @@ function addEmorocoHandlers(selector) {
     control.sendMessage({ type: "control", action: "emo-focus", id });
   });
 
-  entry$.find('.emoroco-remove').click((e) => {
+  entry$.find(".emoroco-remove").click((e) => {
     e.preventDefault();
     const id = Number(container.dataset.id);
     if (emo_entries[id] == null) return;
@@ -134,11 +139,11 @@ function addEmorocoHandlers(selector) {
 }
 
 function populateEmotionsList() {
-  const list = document.getElementById('emotions-list');
+  const list = document.getElementById("emotions-list");
   if (!list) return;
   const frag = document.createDocumentFragment();
   emotions.forEach((e) => {
-    const opt = document.createElement('option');
+    const opt = document.createElement("option");
     opt.value = e;
     frag.appendChild(opt);
   });
@@ -149,15 +154,15 @@ control.onReadys.push(() => {
   populateEmotionsList();
 
   // Snapshot the initial entry as the template before any state changes.
-  const initial = document.querySelector('.emoroco-entry');
+  const initial = document.querySelector(".emoroco-entry");
   if (initial) {
     templateHtml = initial.outerHTML;
-    initial.dataset.id = '0';
+    initial.dataset.id = "0";
     nextId = 1;
     addEmorocoHandlers($(initial));
   }
 
-  $('#emoroco-remove-all').click(() => {
+  $("#emoroco-remove-all").click(() => {
     // Only remove committed entries — never the live draft at the bottom.
     emo_entries.forEach((entry$, id) => {
       if (entry$) control.sendMessage({ type: "control", action: "emo-remove", id });

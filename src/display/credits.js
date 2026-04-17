@@ -32,7 +32,7 @@ messageHandlers.push((message) => {
   if (message.type !== "control" || message.target !== "credits") return;
 
   const target = message.target;
-  const target$ = $('#' + target);
+  const target$ = $("#" + target);
 
   switch (message.action) {
     case "setValue": {
@@ -41,16 +41,18 @@ messageHandlers.push((message) => {
     }
     case "roll": {
       const windowHeight = document.body.scrollHeight;
-      const windowWidth  = document.body.scrollWidth;
+      const windowWidth = document.body.scrollWidth;
 
       const height = target$.get(0).offsetHeight;
       const triggerHeight = windowHeight / 4;
 
-      const time = (height < windowHeight) ? 20 : 20 * (height / windowHeight);
+      const time = height < windowHeight ? 20 : 20 * (height / windowHeight);
 
       const children = Array.from(target$.get(0).children);
       // Don't use hide as we need the spacing
-      children.forEach((child) => { child.style.opacity = '0'; });
+      children.forEach((child) => {
+        child.style.opacity = "0";
+      });
 
       target$.show();
 
@@ -69,17 +71,21 @@ messageHandlers.push((message) => {
         const currentTop = parseFloat(el.style.top);
         children.forEach((child, i) => {
           const childTop = child.getBoundingClientRect().top;
-          if (childTop < windowHeight - triggerHeight && child.style.opacity === '0') {
+          if (childTop < windowHeight - triggerHeight && child.style.opacity === "0") {
             animateIn($(child), windowHeight, windowWidth);
           }
         });
       }, 100);
 
-      el.addEventListener('transitionend', () => {
-        clearInterval(progressInterval);
-        target$.hide();
-        el.style.transition = '';
-      }, { once: true });
+      el.addEventListener(
+        "transitionend",
+        () => {
+          clearInterval(progressInterval);
+          target$.hide();
+          el.style.transition = "";
+        },
+        { once: true }
+      );
 
       break;
     }
@@ -90,8 +96,13 @@ function animateIn(item$, windowHeight, windowWidth) {
   item$.css("opacity", "1");
 
   const animations = [
-    "bounceInLeft", "bounceInRight", "bounceInUp", "flipUp",
-    "rotateInUpLeft", "rotateInUpRight", "growIn"
+    "bounceInLeft",
+    "bounceInRight",
+    "bounceInUp",
+    "flipUp",
+    "rotateInUpLeft",
+    "rotateInUpRight",
+    "growIn",
   ];
 
   const animation = animations[Math.floor(Math.random() * animations.length * 0.99)];
@@ -100,11 +111,11 @@ function animateIn(item$, windowHeight, windowWidth) {
   item$.addClass(animation);
 
   const onEnd = () => {
-    item$.off('animationend', onEnd);
-    item$.off('webkitAnimationEnd', onEnd);
+    item$.off("animationend", onEnd);
+    item$.off("webkitAnimationEnd", onEnd);
     item$.removeClass("animated");
     item$.removeClass(animation);
   };
-  item$.on('animationend', onEnd);
-  item$.on('webkitAnimationEnd', onEnd);
+  item$.on("animationend", onEnd);
+  item$.on("webkitAnimationEnd", onEnd);
 }

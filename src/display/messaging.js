@@ -12,7 +12,7 @@ display.onReadys.push(() => {
 
 display.sendMessage = (messageData) => {
   const msg = JSON.stringify(messageData);
-  display.controller.postMessage(msg, "*");
+  display.controller.postMessage(msg, window.location.origin);
 };
 
 function handleMessage(data, source) {
@@ -41,7 +41,7 @@ function handleMessage(data, source) {
 callbackHandlers.push((message) => {
   switch (message.type) {
     case "hello":
-      $('#loader').fadeOut(1000, () => $('#loader').remove());
+      $("#loader").fadeOut(1000, () => $("#loader").remove());
       break;
   }
 });
