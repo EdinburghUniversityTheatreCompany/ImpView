@@ -13,7 +13,7 @@ Vite + vanilla ES2022 + hand-rolled SCSS with a PWA shell. The two-window
 Requirements
 ------------
 
-- Node.js 20 (see [.nvmrc](.nvmrc))
+- Node.js 24 (see [.nvmrc](.nvmrc))
 
 Commands
 --------
