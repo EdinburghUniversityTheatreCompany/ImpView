@@ -6,6 +6,7 @@ import "./globals.js";
 import "./messaging.js";
 
 // Remaining modules alphabetically:
+import "./activation.js";
 import "./alphabet.js";
 import "./animate.js";
 import "./credits.js";

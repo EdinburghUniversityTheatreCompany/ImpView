@@ -21,6 +21,40 @@ body {
   height: 100%;
 }
 
+/* ─── First-interaction overlay ─── */
+// Browsers block autoplay until the user activates the document. The control
+// window's "Start Display" click doesn't count for the popup — the display
+// needs its own gesture. This overlay collects that gesture and then removes
+// itself, so video.play() works the first time the operator hits it.
+#activation-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: opacity 0.4s;
+}
+
+#activation-overlay.dismissed {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#activation-title {
+  font-size: 64px;
+  color: #e26b18;
+  margin-bottom: 20px;
+}
+
+#activation-subtitle {
+  font-size: 28px;
+  color: #aaa;
+}
+
 /* ─── Layout ─── */
 .content {
   position: absolute;
