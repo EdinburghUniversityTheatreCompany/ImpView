@@ -3,12 +3,12 @@
  * Vanilla modal helper — no Bootstrap, no jQuery.
  * Creates a backdrop + modal, auto-dismisses on Close / backdrop click / ESC.
  */
-export function showModal({ title, bodyHtml }) {
+export function showModal({ title, bodyHtml, size }) {
   const backdrop = document.createElement('div');
   backdrop.className = 'modal-backdrop';
 
   const modal = document.createElement('div');
-  modal.className = 'modal';
+  modal.className = 'modal' + (size === 'wide' ? ' modal-wide' : '');
   modal.innerHTML = `
     <div class="modal-header">
       <h3>${title}</h3>

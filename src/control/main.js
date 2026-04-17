@@ -18,6 +18,7 @@ import "./i.js";
 import "./image.js";
 import "./keyboard.js";
 import "./quickControls.js";
+import "./shortcutHelp.js";
 import "./spellCheck.js";
 import "./text.js";
 import "./video.js";
