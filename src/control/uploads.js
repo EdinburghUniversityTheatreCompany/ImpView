@@ -1,23 +1,10 @@
 import { $ } from "../lib/dom.js";
 import { confirmModal } from "../lib/modal.js";
+import { escapeHtml } from "../lib/escape.js";
 import * as mediaStore from "../lib/mediaStore.js";
 
 const control = window.control;
 const onReadys = control.onReadys;
-
-function escapeHtml(s) {
-  return String(s).replace(
-    /[&<>"']/g,
-    (c) =>
-      ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-      })[c]
-  );
-}
 
 async function renderRow(kind) {
   const containerSel = kind === "image" ? ".uploaded-images" : ".uploaded-videos";

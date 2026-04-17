@@ -1,14 +1,8 @@
 import { $ } from "../lib/dom.js";
 import { showModal } from "../lib/modal.js";
+import { escapeHtml } from "../lib/escape.js";
 
 const control = window.control;
-
-function escapeHtml(s) {
-  return String(s).replace(
-    /[&<>"']/g,
-    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]
-  );
-}
 
 function buildHelpHtml() {
   const sections = [];
