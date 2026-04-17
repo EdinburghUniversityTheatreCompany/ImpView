@@ -3,8 +3,8 @@ import { $ } from "../lib/dom.js";
 const display = window.display;
 const messageHandlers = display.messageHandlers;
 
-// "keep" (default): stop where it is. "fade": stop and fade out. "loop": restart from 0.
-let onEnd = "keep";
+// "fade" (default): stop where it is. "fade": stop and fade out. "loop": restart from 0.
+let onEnd = "fade";
 
 messageHandlers.push((message) => {
   if (message.type !== "control" || message.target !== "video") return;
