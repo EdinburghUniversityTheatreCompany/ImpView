@@ -20,6 +20,10 @@
         <a id="quick-hide-all" class="btn">Hide All</a>
         <a id="quick-fade-all" class="btn">Fade Out All</a>
         <a id="quick-shortcuts" class="btn" title="Show keyboard shortcuts (press ?)">Shortcuts</a>
+        <a id="quick-export-zip" class="btn" title="Export uploaded media as ZIP">Export ZIP</a>
+        <a id="quick-import-zip" class="btn" title="Import a media ZIP">Import ZIP</a>
+        <a id="quick-clear-library" class="btn" title="Delete all uploaded media">Clear Library</a>
+        <input id="import-zip-file" type="file" accept=".zip,application/zip" style="display:none">
       </div>
 
       <div class="states">
@@ -142,6 +146,13 @@
             <a data-shortcut="d"><img src="content/CustomsEndowment.jpg" /></a>
             <a data-shortcut="f"><img src="content/Daleks.png"           /></a>
           </p>
+
+          <p class="uploaded-images"></p>
+
+          <p>
+            <a id="upload-image" class="btn">Upload Image(s)</a>
+            <input id="upload-image-file" type="file" accept="image/*" multiple style="display:none">
+          </p>
         </div>
         <div class="control-group" data-shortcut="4">
           <h3 class="group-header">Video</h3>
@@ -172,6 +183,13 @@
             <a data-shortcut="f"><video src="content/bbcnews.webm"     /></a>
             <a data-shortcut="g"><video src="content/itvnews.webm"     /></a>
             <a data-shortcut="h"><video src="content/BBCOlympics.webm" /></a>
+          </p>
+
+          <p class="uploaded-videos"></p>
+
+          <p>
+            <a id="upload-video" class="btn">Upload Video(s)</a>
+            <input id="upload-video-file" type="file" accept="video/*" multiple style="display:none">
           </p>
         </div>
         <div class="control-group" data-shortcut="5">

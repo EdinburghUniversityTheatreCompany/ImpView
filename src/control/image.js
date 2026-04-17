@@ -40,6 +40,7 @@ clickHandlers.push(() => {
 
   $('.preset-images a').click((e) => {
     const img = $(e.currentTarget).find("img").get(0);
+    delete document.getElementById('image-input').dataset.mediaId;
     $('#image-input').val(img.src);
     $('#image-input').keyup();
   });
@@ -60,19 +61,33 @@ stateHandlers.push(() => {
 });
 
 onReadys.push(() => {
+  const imageInput = document.getElementById('image-input');
+
+  // If the user types/edits the URL manually, drop any media-library binding
+  // so the next send goes via URL rather than blob-id lookup.
+  imageInput.addEventListener('input', (e) => {
+    if (e.isTrusted) delete imageInput.dataset.mediaId;
+  });
+
   let img_src = "";
   $('#image-input').keyup(() => {
     if (img_src === $('#image-input').val()) return;
 
     img_src = $('#image-input').val();
     $('#controls-image-loader').text("Loading...");
-    control.sendMessage({ type: "control", target: "image", action: "setSource", value: img_src });
+    const mediaId = imageInput.dataset.mediaId;
+    if (mediaId) {
+      control.sendMessage({ type: "control", target: "image", action: "setSource", mediaId });
+    } else {
+      control.sendMessage({ type: "control", target: "image", action: "setSource", value: img_src });
+    }
   });
 
   $('#image-file').change(() => {
     const input = $('#image-file').get(0);
     const url = URL.createObjectURL(input.files[0]);
 
+    delete imageInput.dataset.mediaId;
     $('#image-input').val(url);
     $('#controls-image-loader').text("Loading...");
     control.sendMessage({ type: "control", target: "image", action: "setSource", value: url });

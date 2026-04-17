@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import * as mediaStore from "../lib/mediaStore.js";
 
 const display = window.display;
 const messageHandlers = display.messageHandlers;
@@ -18,6 +19,19 @@ messageHandlers.push((message) => {
       break;
     }
     case "setSource": {
+      if (message.mediaId) {
+        mediaStore.objectUrlFor(message.mediaId)
+          .then((url) => {
+            target$.attr("src", url);
+            display.sendMessage({ type: "control", target: "video", action: "setSource", callback: true });
+          })
+          .catch((err) => {
+            console.error('[video] mediaStore lookup failed:', err);
+            display.sendMessage({ type: "error", target: "video", value: "Media not found in library", callback: true });
+          });
+        break;
+      }
+
       const error = (status, detail) => {
         let msg;
         switch (status) {

@@ -55,8 +55,10 @@ clickHandlers.push(() => {
   $('.preset-videos a').click((e) => {
     const link = e.currentTarget;
     document.querySelectorAll('.preset-videos a.active').forEach((a) => a.classList.remove('active'));
+    document.querySelectorAll('.uploaded-videos a.active').forEach((a) => a.classList.remove('active'));
     link.classList.add('active');
     const video = $(link).find('video').get(0);
+    delete document.getElementById('video-input').dataset.mediaId;
     $('#video-input').val(video.src);
     $('#video-input').keyup();
   });
@@ -100,6 +102,11 @@ onReadys.push(() => {
   const selected = document.querySelector('input[name="video-on-end"]:checked');
   if (selected) control.sendMessage({ type: "control", target: "video", action: "setOnEnd", value: selected.value });
 
+  const videoInput = document.getElementById('video-input');
+  videoInput.addEventListener('input', (e) => {
+    if (e.isTrusted) delete videoInput.dataset.mediaId;
+  });
+
   let video_src = "";
   $('#video-input').keyup(() => {
     if (video_src === $('#video-input').val()) return;
@@ -112,7 +119,12 @@ onReadys.push(() => {
       document.querySelectorAll('.preset-videos a.active').forEach((a) => a.classList.remove('active'));
     }
     $('#controls-video-loader').text("Loading...");
-    control.sendMessage({ type: "control", target: "video", action: "setSource", value: video_src });
+    const mediaId = videoInput.dataset.mediaId;
+    if (mediaId) {
+      control.sendMessage({ type: "control", target: "video", action: "setSource", mediaId });
+    } else {
+      control.sendMessage({ type: "control", target: "video", action: "setSource", value: video_src });
+    }
   });
 
   $('#video-file').change(() => {
@@ -120,6 +132,8 @@ onReadys.push(() => {
     const url = URL.createObjectURL(input.files[0]);
 
     document.querySelectorAll('.preset-videos a.active').forEach((a) => a.classList.remove('active'));
+    document.querySelectorAll('.uploaded-videos a.active').forEach((a) => a.classList.remove('active'));
+    delete videoInput.dataset.mediaId;
     $('#video-input').val(url);
     $('#controls-video-loader').text("Loading...");
     control.sendMessage({ type: "control", target: "video", action: "setSource", value: url });

@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import * as mediaStore from "../lib/mediaStore.js";
 
 const display = window.display;
 const messageHandlers = display.messageHandlers;
@@ -11,6 +12,21 @@ messageHandlers.push((message) => {
 
   switch (message.action) {
     case "setSource": {
+      // Fast path: media library lookup. No network, no XHR — just grab the
+      // blob from IndexedDB and turn it into a local object URL.
+      if (message.mediaId) {
+        mediaStore.objectUrlFor(message.mediaId)
+          .then((url) => {
+            target$.css("background-image", `url("${url}")`);
+            display.sendMessage({ type: "control", target: "image", action: "setSource", callback: true });
+          })
+          .catch((err) => {
+            console.error('[image] mediaStore lookup failed:', err);
+            display.sendMessage({ type: "error", target: "image", value: "Media not found in library", callback: true });
+          });
+        break;
+      }
+
       const error = (status) => {
         let msg;
         switch (status) {
