@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import { send } from "../lib/messages.ts";
 
 const control = window.control;
 
@@ -17,25 +18,17 @@ callbackHandlers.push((message) => {
         break;
     }
   } else if (message.type === "error") {
-    $("#controls-image-loader").text(message.value);
+    $("#controls-image-loader").text(message.msg);
   }
 });
 
 clickHandlers.push(() => {
   $("#controls-show-hide-image").click(() => {
-    if ($("#image-state").val() === "hidden") {
-      control.sendMessage({ type: "control", target: "image", action: "show" });
-    } else {
-      control.sendMessage({ type: "control", target: "image", action: "hide" });
-    }
+    send("image", $("#image-state").val() === "hidden" ? "show" : "hide");
   });
 
   $("#controls-fade-image").click(() => {
-    if ($("#image-state").val() === "hidden") {
-      control.sendMessage({ type: "control", target: "image", action: "fadeIn" });
-    } else {
-      control.sendMessage({ type: "control", target: "image", action: "fadeOut" });
-    }
+    send("image", $("#image-state").val() === "hidden" ? "fadeIn" : "fadeOut");
   });
 
   $(".preset-images a").click((e) => {
@@ -77,14 +70,9 @@ onReadys.push(() => {
     $("#controls-image-loader").text("Loading...");
     const mediaId = imageInput.dataset.mediaId;
     if (mediaId) {
-      control.sendMessage({ type: "control", target: "image", action: "setSource", mediaId });
+      send("image", "setSource", { mediaId });
     } else {
-      control.sendMessage({
-        type: "control",
-        target: "image",
-        action: "setSource",
-        value: img_src,
-      });
+      send("image", "setSource", { url: img_src });
     }
   });
 
@@ -95,6 +83,6 @@ onReadys.push(() => {
     delete imageInput.dataset.mediaId;
     $("#image-input").val(url);
     $("#controls-image-loader").text("Loading...");
-    control.sendMessage({ type: "control", target: "image", action: "setSource", value: url });
+    send("image", "setSource", { url });
   });
 });

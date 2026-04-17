@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import { send } from "../lib/messages.ts";
 import games from "../data/games.js";
 
 const control = window.control;
@@ -16,19 +17,11 @@ function titleize(string) {
 
 clickHandlers.push(() => {
   $("#controls-show-hide-text").click(() => {
-    if ($("#text-state").val() === "hidden") {
-      control.sendMessage({ type: "control", target: "text", action: "show" });
-    } else {
-      control.sendMessage({ type: "control", target: "text", action: "hide" });
-    }
+    send("text", $("#text-state").val() === "hidden" ? "show" : "hide");
   });
 
   $("#controls-fade-text").click(() => {
-    if ($("#text-state").val() === "hidden") {
-      control.sendMessage({ type: "control", target: "text", action: "fadeIn" });
-    } else {
-      control.sendMessage({ type: "control", target: "text", action: "fadeOut" });
-    }
+    send("text", $("#text-state").val() === "hidden" ? "fadeIn" : "fadeOut");
   });
 
   $("#controls-spellcheck-text").click(() => {
@@ -57,21 +50,11 @@ stateHandlers.push(() => {
 
 onReadys.push(() => {
   $("#text-input").keyup(() => {
-    control.sendMessage({
-      type: "control",
-      target: "text",
-      action: "setValue",
-      value: $("#text-input").val(),
-    });
+    send("text", "setValue", { value: $("#text-input").val() });
   });
 
   $("#text-color").change(() => {
-    control.sendMessage({
-      type: "control",
-      target: "text",
-      action: "setColor",
-      value: $("#text-color").val(),
-    });
+    send("text", "setColor", { value: $("#text-color").val() });
   });
 
   // Games list is now baked — no fetch needed. (imported from ../data/games.js)

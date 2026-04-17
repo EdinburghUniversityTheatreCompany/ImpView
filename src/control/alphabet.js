@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import { send } from "../lib/messages.ts";
 
 const control = window.control;
 
@@ -8,14 +9,10 @@ const stateHandlers = control.stateHandlers;
 
 clickHandlers.push(() => {
   $("#controls-show-hide-alphabet").click(() => {
-    if ($("#alphabet-state").val() === "hidden") {
-      control.sendMessage({ type: "control", target: "alphabet", action: "show" });
-    } else {
-      control.sendMessage({ type: "control", target: "alphabet", action: "hide" });
-    }
+    send("alphabet", $("#alphabet-state").val() === "hidden" ? "show" : "hide");
   });
   $("#controls-next-alphabet").click(() => {
-    control.sendMessage({ type: "control", target: "alphabet", action: "next" });
+    send("alphabet", "next");
   });
 });
 
@@ -36,6 +33,6 @@ onReadys.push(() => {
 
     if (start === "") return;
 
-    control.sendMessage({ type: "control", target: "alphabet", action: "setStart", value: start });
+    send("alphabet", "setStart", { value: start });
   });
 });

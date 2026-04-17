@@ -1,12 +1,10 @@
 import { $ } from "../lib/dom.js";
 import * as mediaStore from "../lib/mediaStore.js";
+import { reply } from "../lib/messages.ts";
 
 const display = window.display;
-const messageHandlers = display.messageHandlers;
 
-messageHandlers.push((message) => {
-  if (message.type !== "control" || message.target !== "image") return;
-
+display.registerTarget("image", (message) => {
   const target = message.target;
   const target$ = $("#" + target);
 
@@ -14,24 +12,19 @@ messageHandlers.push((message) => {
     case "setSource": {
       // Fast path: media library lookup. No network, no XHR — just grab the
       // blob from IndexedDB and turn it into a local object URL.
-      if (message.mediaId) {
+      if ("mediaId" in message) {
         mediaStore
           .objectUrlFor(message.mediaId)
           .then((url) => {
             target$.css("background-image", `url("${url}")`);
-            display.sendMessage({
-              type: "control",
-              target: "image",
-              action: "setSource",
-              callback: true,
-            });
+            reply(message);
           })
           .catch((err) => {
             console.error("[image] mediaStore lookup failed:", err);
             display.sendMessage({
               type: "error",
               target: "image",
-              value: "Media not found in library",
+              msg: "Media not found in library",
               callback: true,
             });
           });
@@ -51,22 +44,17 @@ messageHandlers.push((message) => {
             msg = "Unknown error loading image";
             break;
         }
-        display.sendMessage({ type: "error", target: "image", value: msg, callback: true });
+        display.sendMessage({ type: "error", target: "image", msg, callback: true });
       };
 
       const xhr = new XMLHttpRequest();
-      xhr.open("GET", message.value, true);
+      xhr.open("GET", message.url, true);
       xhr.responseType = "blob";
       xhr.onload = (e) => {
         if (e.target.status === 200) {
           const url = URL.createObjectURL(xhr.response);
           target$.css("background-image", `url("${url}")`);
-          display.sendMessage({
-            type: "control",
-            target: "image",
-            action: "setSource",
-            callback: true,
-          });
+          reply(message);
         } else {
           error(e.target.status);
         }

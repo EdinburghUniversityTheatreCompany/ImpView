@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import { send } from "../lib/messages.ts";
 
 const control = window.control;
 
@@ -7,21 +8,16 @@ const clickHandlers = control.clickHandlers;
 
 clickHandlers.push(() => {
   $("#controls-roll-credits").click(() => {
-    control.sendMessage({ type: "control", target: "credits", action: "roll" });
+    send("credits", "roll");
   });
 
   $("#controls-hide-credits").click(() => {
-    control.sendMessage({ type: "control", target: "credits", action: "hide" });
+    send("credits", "hide");
   });
 });
 
 onReadys.push(() => {
   $("#credits-editor").keyup(() => {
-    control.sendMessage({
-      type: "control",
-      target: "credits",
-      action: "setValue",
-      value: $("#credits-editor").val(),
-    });
+    send("credits", "setValue", { value: $("#credits-editor").val() });
   });
 });

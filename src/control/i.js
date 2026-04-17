@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import { send } from "../lib/messages.ts";
 
 const control = window.control;
 
@@ -7,19 +8,11 @@ const stateHandlers = control.stateHandlers;
 
 clickHandlers.push(() => {
   $("#controls-show-hide-i").click(() => {
-    if ($("#i-state").val() === "hidden") {
-      control.sendMessage({ type: "control", target: "i", action: "show" });
-    } else {
-      control.sendMessage({ type: "control", target: "i", action: "hide" });
-    }
+    send("i", $("#i-state").val() === "hidden" ? "show" : "hide");
   });
 
   $("#controls-fade-i").click(() => {
-    if ($("#i-state").val() === "hidden") {
-      control.sendMessage({ type: "control", target: "i", action: "fadeIn" });
-    } else {
-      control.sendMessage({ type: "control", target: "i", action: "fadeOut" });
-    }
+    send("i", $("#i-state").val() === "hidden" ? "fadeIn" : "fadeOut");
   });
 });
 
