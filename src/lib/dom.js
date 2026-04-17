@@ -90,11 +90,25 @@ function wrap(nodes) {
       return w;
     },
     on(event, handler) {
-      nodes.forEach(n => n.addEventListener(event, handler));
+      nodes.forEach(n => {
+        n.addEventListener(event, handler);
+        const reg = (n.__domReg ||= {});
+        (reg[event] ||= []).push(handler);
+      });
       return w;
     },
     off(event, handler) {
-      nodes.forEach(n => n.removeEventListener(event, handler));
+      nodes.forEach(n => {
+        const reg = n.__domReg;
+        if (handler === undefined) {
+          if (!reg || !reg[event]) return;
+          reg[event].forEach(h => n.removeEventListener(event, h));
+          reg[event] = [];
+        } else {
+          n.removeEventListener(event, handler);
+          if (reg && reg[event]) reg[event] = reg[event].filter(h => h !== handler);
+        }
+      });
       return w;
     },
     click(handler) {
@@ -104,6 +118,9 @@ function wrap(nodes) {
       }
       return w.on('click', handler);
     },
+    // Synthesized keydown/keyup carry no keyCode — handlers that read e.keyCode
+    // must tolerate undefined. Current ImpView callers only re-trigger their own
+    // keyup handlers to refresh UI state, so this is fine.
     keydown(handler) {
       if (handler === undefined) {
         nodes.forEach(n => n.dispatchEvent(new Event('keydown')));
@@ -155,11 +172,13 @@ function wrap(nodes) {
       nodes.forEach(n => n.parentNode && n.parentNode.removeChild(n));
       return w;
     },
+    // NB: unlike jQuery's .data(), numeric-looking values are coerced to Number.
+    // EmoRoCo (data-id used as array index) and keyboard (charCodeAt on .toString())
+    // both rely on this — don't remove without auditing callers.
     data(key, value) {
       if (value === undefined) {
         if (!nodes[0]) return undefined;
         const v = nodes[0].dataset[key.replace(/-([a-z])/g, (_, c) => c.toUpperCase())];
-        // coerce numeric strings
         return v !== undefined && !isNaN(v) ? Number(v) : v;
       }
       nodes.forEach(n => { n.dataset[key.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = value; });

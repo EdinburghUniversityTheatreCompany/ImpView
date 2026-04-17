@@ -17,12 +17,10 @@ ready(() => {
       if (e.keyCode !== 32) return;
 
       const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
-      if (isFullscreen) {
-        (document.exitFullscreen || document.webkitCancelFullScreen).call(document);
-      } else {
-        const el = document.body;
-        (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
-      }
+      const result = isFullscreen
+        ? (document.exitFullscreen || document.webkitCancelFullScreen).call(document)
+        : (document.body.requestFullscreen || document.body.webkitRequestFullscreen).call(document.body);
+      if (result && typeof result.catch === 'function') result.catch(() => {});
     });
   } catch (e) {
     display.sendError(e.message, "", "", e.stack);

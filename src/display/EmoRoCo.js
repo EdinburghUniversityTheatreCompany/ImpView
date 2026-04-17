@@ -64,6 +64,7 @@ display.messageHandlers.push((message) => {
     }
     case "emo-change": {
       const text$ = emoroco_texts[message.id];
+      if (!text$) return;
       text$.text(message.value);
       break;
     }
