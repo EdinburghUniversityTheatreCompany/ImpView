@@ -3,8 +3,11 @@ import emotions from "../data/emotions.js";
 
 const control = window.control;
 
+// Index of committed entries by id (blank/draft entry is NOT in here).
 const emo_entries = [];
 let focusedId = null;
+let nextId = 1;
+let templateHtml = null;
 
 control.callbackHandlers.push((message) => {
   if (message.type !== "control") return;
@@ -14,6 +17,7 @@ control.callbackHandlers.push((message) => {
       const entry$ = emo_entries[message.id];
       if (entry$) {
         entry$.fadeOut(500, () => entry$.remove());
+        delete emo_entries[message.id];
       }
       if (focusedId === message.id) setFocusedId(null);
       break;
@@ -32,12 +36,29 @@ function setFocusedId(id) {
   }
 }
 
+function createEntry(id) {
+  const wrap = document.createElement('div');
+  wrap.innerHTML = templateHtml;
+  const entry = wrap.firstElementChild;
+  entry.dataset.id = id;
+  entry.classList.remove('committed');
+  entry.querySelectorAll('.active').forEach((el) => el.classList.remove('active'));
+  const input = entry.querySelector('input');
+  if (input) input.value = '';
+  return entry;
+}
+
 function commitEntry(entry$) {
+  const entry = entry$._nodes[0];
+  // Ignore commits on already-committed entries (double-click Add, Enter-after-Enter).
+  if (entry.classList.contains('committed')) return;
+
   const input$ = entry$.find('.emoroco-text');
   const value = input$.val();
   if (!value) return;
 
-  const id = entry$.data('id');
+  const id = Number(entry.dataset.id);
+  entry.classList.add('committed');
   emo_entries[id] = entry$;
 
   // Switch the input's keyup from "commit on Enter" to "live update on change"
@@ -46,25 +67,18 @@ function commitEntry(entry$) {
     if (e.keyCode === 13) e.preventDefault();
     control.sendMessage({
       type: "control", action: "emo-change",
-      value: input$.val(), id: entry$.data('id'),
+      value: input$.val(), id,
     });
   });
 
   control.sendMessage({ type: "control", action: "emo-add-text", value, id });
 
-  // Append a fresh entry after this committed one
-  const template = document.querySelector('.emoroco-entry');
-  const newEntry = template.cloneNode(true);
-  newEntry.style.removeProperty('display');
-  const newInput = newEntry.querySelector('input');
-  if (newInput) newInput.value = '';
-  newEntry.querySelectorAll('.active').forEach((el) => el.classList.remove('active'));
-  newEntry.dataset.id = emo_entries.length;
-
-  document.querySelector('.emoroco-group').appendChild(newEntry);
-  addEmorocoHandlers($(newEntry));
-
-  if (newInput) newInput.focus();
+  // Append a fresh draft entry below
+  const draft = createEntry(nextId++);
+  document.querySelector('.emoroco-group').appendChild(draft);
+  addEmorocoHandlers($(draft));
+  const draftInput = draft.querySelector('input');
+  if (draftInput) draftInput.focus();
 }
 
 function addEmorocoHandlers(selector) {
@@ -93,15 +107,29 @@ function addEmorocoHandlers(selector) {
 
   entry$.find('.emoroco-focus').click((e) => {
     e.preventDefault();
-    const id = entry$.data('id');
+    const id = Number(container.dataset.id);
     if (emo_entries[id] == null) return;
+
+    // Fade out the previously-focused row immediately — the display takes ~1s
+    // to fade out its text, but the operator shouldn't have to wait.
+    if (focusedId !== null && focusedId !== id) {
+      const prev$ = emo_entries[focusedId];
+      const prevId = focusedId;
+      if (prev$) {
+        delete emo_entries[prevId];
+        prev$.fadeOut(1000, () => prev$.remove());
+      }
+    }
+
     setFocusedId(id);
     control.sendMessage({ type: "control", action: "emo-focus", id });
   });
 
   entry$.find('.emoroco-remove').click((e) => {
     e.preventDefault();
-    control.sendMessage({ type: "control", action: "emo-remove", id: entry$.data('id') });
+    const id = Number(container.dataset.id);
+    if (emo_entries[id] == null) return;
+    control.sendMessage({ type: "control", action: "emo-remove", id });
   });
 }
 
@@ -119,12 +147,20 @@ function populateEmotionsList() {
 
 control.onReadys.push(() => {
   populateEmotionsList();
-  addEmorocoHandlers('.emoroco-group');
+
+  // Snapshot the initial entry as the template before any state changes.
+  const initial = document.querySelector('.emoroco-entry');
+  if (initial) {
+    templateHtml = initial.outerHTML;
+    initial.dataset.id = '0';
+    nextId = 1;
+    addEmorocoHandlers($(initial));
+  }
 
   $('#emoroco-remove-all').click(() => {
-    $('.emoroco-entry').each((_i, target) => {
-      const target$ = $(target);
-      control.sendMessage({ type: "control", action: "emo-remove", id: target$.data('id') });
+    // Only remove committed entries — never the live draft at the bottom.
+    emo_entries.forEach((entry$, id) => {
+      if (entry$) control.sendMessage({ type: "control", action: "emo-remove", id });
     });
     setFocusedId(null);
   });

@@ -18,33 +18,62 @@ function wrap(nodes) {
     },
     fadeIn(duration = 400, callback) {
       nodes.forEach(n => {
+        // Start from opacity 0 with no transition, then force a reflow so the
+        // browser commits the starting state before we apply the transition.
+        // Without the reflow, some browsers collapse the 0→1 change into the
+        // same frame and skip the animation entirely (and the element never
+        // appears if display was 'none', since transitionend never fires).
+        n.style.transition = 'none';
         n.style.opacity = '0';
         n.style.removeProperty('display');
+        void n.offsetWidth; // force reflow
         n.style.transition = `opacity ${duration}ms`;
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            n.style.opacity = '1';
-            if (callback) {
-              const done = () => { n.removeEventListener('transitionend', done); callback(); };
-              n.addEventListener('transitionend', done);
-            }
-          });
-        });
+        n.style.opacity = '1';
+        if (callback) {
+          let fired = false;
+          const done = () => {
+            if (fired) return;
+            fired = true;
+            n.removeEventListener('transitionend', done);
+            clearTimeout(timer);
+            callback();
+          };
+          n.addEventListener('transitionend', done);
+          const timer = setTimeout(done, duration + 50);
+        }
       });
       return w;
     },
     fadeOut(duration = 400, callback) {
       nodes.forEach(n => {
+        // Force the starting opacity to commit before we apply the transition
+        // — same reflow trick as fadeIn. Without it, elements whose computed
+        // opacity already matches the target (or whose transition property was
+        // in flux) silently skip the animation and never fire transitionend,
+        // leaving the callback uncalled and the element still on screen.
+        const start = getComputedStyle(n).opacity;
+        n.style.transition = 'none';
+        n.style.opacity = start;
+        void n.offsetWidth;
         n.style.transition = `opacity ${duration}ms`;
         n.style.opacity = '0';
+
+        let fired = false;
         const done = () => {
+          if (fired) return;
+          fired = true;
           n.removeEventListener('transitionend', done);
+          clearTimeout(timer);
           n.style.display = 'none';
           n.style.removeProperty('transition');
           n.style.opacity = '';
           if (callback) callback();
         };
         n.addEventListener('transitionend', done);
+        // Safety net: if transitionend never fires (transition got overridden,
+        // start === 0, display:none mid-flight, etc.) still finish after the
+        // nominal duration.
+        const timer = setTimeout(done, duration + 50);
       });
       return w;
     },
