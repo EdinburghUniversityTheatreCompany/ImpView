@@ -19,6 +19,10 @@ display.onReadys.push(() => {
 });
 
 display.sendMessage = (messageData) => {
+  // If this page was opened directly (no window.opener), or the controller
+  // was closed, there is nowhere to send. Swallow silently — the display
+  // is designed to keep running for the audience even if control goes away.
+  if (!display.controller || display.controller.closed) return;
   const msg = JSON.stringify(messageData);
   display.controller.postMessage(msg, window.location.origin);
 };

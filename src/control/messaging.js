@@ -20,7 +20,24 @@ control.onReadys.push(() => {
   );
 });
 
+let displayDisconnectedReported = false;
+
 control.sendMessage = (messageData) => {
+  // Display popup was never opened, or the operator closed it.
+  // Report once and bail — every subsequent send would otherwise throw.
+  if (!control.display || control.display.closed) {
+    if (!displayDisconnectedReported) {
+      displayDisconnectedReported = true;
+      control.showError(
+        "Display window is not connected. Reopen it via Start Display.",
+        "",
+        "",
+        "control.display is " + (control.display ? "closed" : "null")
+      );
+    }
+    return;
+  }
+
   const msg = JSON.stringify(messageData);
   control.display.postMessage(msg, window.location.origin);
 };
@@ -51,6 +68,7 @@ function handleMessage(data) {
 messageHandlers.push((message) => {
   switch (message.type) {
     case "hello":
+      displayDisconnectedReported = false;
       $("#loader").fadeOut(1000, () => {
         $("#loader").remove();
         $("#controls").fadeIn();
