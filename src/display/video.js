@@ -3,6 +3,9 @@ import { $ } from "../lib/dom.js";
 const display = window.display;
 const messageHandlers = display.messageHandlers;
 
+// "keep" (default): stop where it is. "fade": stop and fade out. "loop": restart from 0.
+let onEnd = "keep";
+
 messageHandlers.push((message) => {
   if (message.type !== "control" || message.target !== "video") return;
 
@@ -10,6 +13,10 @@ messageHandlers.push((message) => {
   const target$ = $('#' + target);
 
   switch (message.action) {
+    case "setOnEnd": {
+      onEnd = message.value;
+      break;
+    }
     case "setSource": {
       const error = (status, detail) => {
         let msg;
@@ -47,7 +54,15 @@ messageHandlers.push((message) => {
       const videoEl = target$.get(0);
       target$.off('ended');
       target$.on('ended', () => {
+        if (onEnd === "loop") {
+          videoEl.currentTime = 0;
+          videoEl.play().catch(() => {});
+          return;
+        }
         display.sendMessage({ type: "control", target: target, action: "paused", callback: true });
+        if (onEnd === "fade") {
+          target$.fadeOut(1000, () => display.sendVisibility(target));
+        }
       });
       // Browsers block autoplay unless the display window itself has had a
       // user gesture — clicking "Start Display" happens in the CONTROL window,

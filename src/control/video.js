@@ -27,14 +27,6 @@ callbackHandlers.push((message) => {
 });
 
 clickHandlers.push(() => {
-  $('#controls-show-hide-video').click(() => {
-    if ($('#video-state').val() === "hidden") {
-      control.sendMessage({ type: "control", target: "video", action: "show" });
-    } else {
-      control.sendMessage({ type: "control", target: "video", action: "hide" });
-    }
-  });
-
   $('#controls-fade-video').click(() => {
     if ($('#video-state').val() === "hidden") {
       control.sendMessage({ type: "control", target: "video", action: "fadeIn" });
@@ -43,10 +35,15 @@ clickHandlers.push(() => {
     }
   });
 
+  // Play toggles play/pause. If the video is hidden, also fade it in —
+  // the old "Show and Play" button was just this.
   $('#controls-play-video').click(() => {
     if ($('#video-play-state').val() === "playing") {
       control.sendMessage({ type: "control", target: "video", action: "pause" });
     } else {
+      if ($('#video-state').val() === "hidden") {
+        control.sendMessage({ type: "control", target: "video", action: "fadeIn" });
+      }
       control.sendMessage({ type: "control", target: "video", action: "play" });
     }
   });
@@ -55,21 +52,20 @@ clickHandlers.push(() => {
     control.sendMessage({ type: "control", target: "video", action: "restart" });
   });
 
-  $('#controls-show-play-video').click(() => {
-    control.sendMessage({ type: "control", target: "video", action: "show" });
-    control.sendMessage({ type: "control", target: "video", action: "play" });
-  });
-
-  $('#controls-hide-restart-video').click(() => {
-    control.sendMessage({ type: "control", target: "video", action: "hide" });
-    control.sendMessage({ type: "control", target: "video", action: "pause" });
-    control.sendMessage({ type: "control", target: "video", action: "restart" });
-  });
-
   $('.preset-videos a').click((e) => {
-    const video = $(e.currentTarget).find('video').get(0);
+    const link = e.currentTarget;
+    document.querySelectorAll('.preset-videos a.active').forEach((a) => a.classList.remove('active'));
+    link.classList.add('active');
+    const video = $(link).find('video').get(0);
     $('#video-input').val(video.src);
     $('#video-input').keyup();
+  });
+
+  $('input[name="video-on-end"]').each((_i, el) => {
+    el.addEventListener('change', () => {
+      if (!el.checked) return;
+      control.sendMessage({ type: "control", target: "video", action: "setOnEnd", value: el.value });
+    });
   });
 
   $('.preset-videos video').each((i, item) => {
@@ -80,14 +76,11 @@ clickHandlers.push(() => {
 });
 
 function setVideoButtonStates() {
-  const show_hide = $('#controls-show-hide-video');
   const fade = $('#controls-fade-video');
   if ($('#video-state').val() === "hidden") {
-    show_hide.text("Show Video");
-    fade.text("Fade Video In");
+    fade.text("Fade In Video");
   } else {
-    show_hide.text("Hide Video");
-    fade.text("Fade Video Out");
+    fade.text("Fade Out Video");
   }
 
   if ($('#video-play-state').val() === "playing") {
@@ -103,11 +96,21 @@ stateHandlers.push(() => {
 });
 
 onReadys.push(() => {
+  // Sync initial on-end selection to the display.
+  const selected = document.querySelector('input[name="video-on-end"]:checked');
+  if (selected) control.sendMessage({ type: "control", target: "video", action: "setOnEnd", value: selected.value });
+
   let video_src = "";
   $('#video-input').keyup(() => {
     if (video_src === $('#video-input').val()) return;
 
     video_src = $('#video-input').val();
+    // Clear any preset highlight unless the URL came from a preset click (which
+    // sets .active before triggering keyup).
+    const activePreset = document.querySelector('.preset-videos a.active video');
+    if (!activePreset || activePreset.src !== video_src) {
+      document.querySelectorAll('.preset-videos a.active').forEach((a) => a.classList.remove('active'));
+    }
     $('#controls-video-loader').text("Loading...");
     control.sendMessage({ type: "control", target: "video", action: "setSource", value: video_src });
   });
@@ -116,6 +119,7 @@ onReadys.push(() => {
     const input = $('#video-file').get(0);
     const url = URL.createObjectURL(input.files[0]);
 
+    document.querySelectorAll('.preset-videos a.active').forEach((a) => a.classList.remove('active'));
     $('#video-input').val(url);
     $('#controls-video-loader').text("Loading...");
     control.sendMessage({ type: "control", target: "video", action: "setSource", value: url });

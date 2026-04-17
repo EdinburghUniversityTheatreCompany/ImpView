@@ -189,6 +189,18 @@ body::before {
 
 #quick-controls .btn { display: block; }
 
+/* ─── Video on-end toggle ─── */
+.video-on-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+
+  label { display: inline-flex; align-items: center; gap: 4px; }
+  input[type="radio"] { margin: 0; }
+}
+
 /* ─── Preset images / videos ─── */
 .preset-images a,
 .preset-videos a {
@@ -204,6 +216,18 @@ body::before {
 .preset-images img,
 .preset-videos video {
   width: 100px;
+}
+
+.preset-videos a {
+  padding: 2px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  transition: border-color 0.15s;
+}
+
+.preset-videos a.active {
+  border-color: #e26b18;
+  box-shadow: 0 0 10px rgba(226, 107, 24, 0.6);
 }
 
 /* ─── Credits editor ─── */

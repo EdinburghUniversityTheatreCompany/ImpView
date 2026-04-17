@@ -153,15 +153,16 @@
           </form>
 
           <p>
-            <a id="controls-show-hide-video" data-shortcut="q" class="btn">Show Video</a>
-            <a id="controls-fade-video"      data-shortcut="w" class="btn">Fade In Video</a>
-            <a id="controls-play-video"      data-shortcut="e" class="btn">Play Video</a>
-            <a id="controls-restart-video"   data-shortcut="r" class="btn">Restart Video</a>
+            <a id="controls-fade-video"    data-shortcut="q" class="btn">Fade In Video</a>
+            <a id="controls-play-video"    data-shortcut="w" class="btn">Play Video</a>
+            <a id="controls-restart-video" data-shortcut="e" class="btn">Restart Video</a>
           </p>
 
-          <p>
-            <a id="controls-show-play-video"    data-shortcut="t" class="btn">Show and Play Video</a>
-            <a id="controls-hide-restart-video" data-shortcut="y" class="btn">Hide and Restart Video</a>
+          <p class="video-on-end">
+            <label>When video ends:</label>
+            <label><input type="radio" name="video-on-end" value="keep" checked> Stop &amp; keep</label>
+            <label><input type="radio" name="video-on-end" value="fade"> Stop &amp; fade</label>
+            <label><input type="radio" name="video-on-end" value="loop"> Restart</label>
           </p>
 
           <p class="preset-videos">
