@@ -16,6 +16,9 @@ npm run dev         # Vite dev server at http://localhost:5173
 npm run build       # build to ./dist/
 npm run preview     # serve ./dist/ locally
 npm test            # run Playwright integration tests
+npm run typecheck   # tsc --noEmit (checks .ts files only)
+npm run lint        # ESLint + stylelint
+npm run format      # Prettier write
 ```
 
 Docker (multi-stage Node build → nginx):
@@ -25,7 +28,9 @@ docker build -t impview .
 docker run --rm -p 8080:80 impview
 ```
 
-No linter is configured. Playwright covers the two-window critical path; no unit tests exist.
+Tooling: ESLint + stylelint + Prettier, husky + lint-staged pre-commit hook (runs lint, format, and `tsc --noEmit` on staged files). Playwright covers the two-window critical path; no unit tests exist.
+
+TypeScript is used for the messaging protocol layer only ([src/lib/messages.ts](src/lib/messages.ts) plus the two `messaging.ts` dispatchers). All feature modules stay `.js` and call into typed helpers — TS checks arguments at the boundary via `allowJs`. Do NOT migrate feature modules to TS without a reason; the protocol-only scope is deliberate.
 
 ## Running the app
 

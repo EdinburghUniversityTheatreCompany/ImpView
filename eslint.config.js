@@ -1,4 +1,5 @@
 import js from "@eslint/js";
+import tseslint from "typescript-eslint";
 import globals from "globals";
 import html from "@html-eslint/eslint-plugin";
 import htmlParser from "@html-eslint/parser";
@@ -9,8 +10,9 @@ export default [
     ignores: ["dist/**", "node_modules/**", "playwright-report/**", "test-results/**"],
   },
   js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
-    files: ["src/**/*.js", "tests/**/*.js", "*.config.js"],
+    files: ["src/**/*.{js,ts}", "tests/**/*.{js,ts}", "*.config.{js,ts}"],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: "module",
