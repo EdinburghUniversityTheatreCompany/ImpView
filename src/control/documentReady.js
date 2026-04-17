@@ -32,7 +32,13 @@ ready(() => {
 
     // Open a new window normally (Chrome App path deleted).
     $("#start_display_button").click(() => {
-      control.display = window.open('display.html', 'ImpView Display');
+      // `popup=yes` forces a new window rather than a tab. Size is a sensible
+      // starting default; the operator usually spacebars to fullscreen anyway.
+      control.display = window.open(
+        'display.html',
+        'ImpView Display',
+        'popup=yes,width=1280,height=720'
+      );
       finish_setup();
     });
   } catch (e) {
