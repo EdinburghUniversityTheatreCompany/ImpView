@@ -54,6 +54,22 @@ textarea:focus {
   border-color: #e26b18;
 }
 
+/* ─── Keyboard focus ─── */
+
+/* Visible ring for keyboard users; stays out of the way for mouse clicks. */
+:focus-visible {
+  outline: 2px solid #e26b18;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.btn:focus-visible,
+.uploaded-tile:focus-visible,
+.preset-videos a:focus-visible,
+.preset-images a:focus-visible {
+  outline-offset: 3px;
+}
+
 /* ─── Logo header pseudo-element ─── */
 body::before {
   position: absolute;
