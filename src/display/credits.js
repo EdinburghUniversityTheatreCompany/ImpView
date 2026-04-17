@@ -1,5 +1,30 @@
 import { $ } from "../lib/dom.js";
 
+// We originally rendered credits through PageDown / Showdown (full Markdown),
+// but the credits CSS only ever styles <h1> and <p>. Everything else rendered
+// unstyled anyway. This mini-parser handles the two features that matter:
+// lines starting with `#`..`######` become headings, paragraphs are
+// blank-line-separated. If you ever need full Markdown back (lists, bold,
+// links, etc.), `npm i showdown` (or `marked`) and swap renderCredits for its
+// converter.
+function renderCredits(markdown) {
+  // Ensure each line becomes its own block, so every `name` is its own <p>.
+  const normalized = markdown.replace(/\n(\w)/g, "\n\n$1");
+  return normalized
+    .split(/\n\s*\n/)
+    .map((block) => block.trim())
+    .filter((block) => block.length > 0)
+    .map((block) => {
+      const heading = block.match(/^(#{1,6})\s+(.+)$/);
+      if (heading) {
+        const level = heading[1].length;
+        return `<h${level}>${heading[2]}</h${level}>`;
+      }
+      return `<p>${block.replace(/\n/g, "<br>")}</p>`;
+    })
+    .join("\n");
+}
+
 const display = window.display;
 const messageHandlers = display.messageHandlers;
 
@@ -11,17 +36,7 @@ messageHandlers.push((message) => {
 
   switch (message.action) {
     case "setValue": {
-      let markdown = message.value;
-      // For sanity: ensure blank line before new paragraphs
-      markdown = markdown.replace(/\n(\w)/g, "\n\n$1");
-      // Use showdown or simple converter if available; fall back to plain text.
-      if (window.Markdown && window.Markdown.Converter) {
-        const converter = new window.Markdown.Converter();
-        target$.html(converter.makeHtml(markdown));
-      } else {
-        // Simple line-break fallback
-        target$.html(markdown.replace(/\n/g, '<br>'));
-      }
+      target$.html(renderCredits(message.value));
       break;
     }
     case "roll": {

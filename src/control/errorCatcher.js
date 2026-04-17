@@ -1,4 +1,4 @@
-import { $ } from "../lib/dom.js";
+import { showModal } from "../lib/modal.js";
 
 const control = window.control;
 
@@ -12,14 +12,9 @@ control.callbackHandlers.push((message) => {
 });
 
 control.showError = (msg, url, line, trace) => {
-  const errorModal = document.createElement('div');
-  errorModal.className = 'modal hide fade';
-  errorModal.innerHTML = `
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h3>Well... this is embarrassing</h3>
-    </div>
-    <div class="modal-body">
+  showModal({
+    title: "Well... this is embarrassing",
+    bodyHtml: `
       <p>
         *Please* report this
         <a href="http://redmine.haydenball.me.uk/projects/impview/issues/new">here</a>.
@@ -31,25 +26,6 @@ control.showError = (msg, url, line, trace) => {
       Trace:
       <pre>${trace}</pre>
       <p>Sorry.</p>
-    </div>
-    <div class="modal-footer">
-      <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
-    </div>
-  `;
-
-  document.body.appendChild(errorModal);
-  // Show as a simple visible div (Bootstrap modal JS no longer available).
-  errorModal.style.display = 'block';
-  errorModal.style.position = 'fixed';
-  errorModal.style.top = '10%';
-  errorModal.style.left = '50%';
-  errorModal.style.transform = 'translateX(-50%)';
-  errorModal.style.zIndex = '9999';
-  errorModal.style.background = '#fff';
-  errorModal.style.padding = '20px';
-  errorModal.style.border = '1px solid #999';
-  errorModal.style.maxWidth = '600px';
-
-  const closeBtn = errorModal.querySelector('[data-dismiss="modal"]');
-  if (closeBtn) closeBtn.addEventListener('click', (e) => { e.preventDefault(); errorModal.remove(); });
+    `
+  });
 };
