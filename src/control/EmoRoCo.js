@@ -1,5 +1,4 @@
 import { $ } from "../lib/dom.js";
-import emotions from "../data/emotions.js";
 
 const control = window.control;
 
@@ -23,8 +22,12 @@ function addEmorocoHandlers(selector) {
   const container = typeof selector === 'string' ? document.querySelector(selector) : selector._nodes[0];
   if (!container) return;
 
-  // Typeahead: attach datalist-based autocomplete via a plain input approach.
-  // The old code used Bootstrap 2 typeahead; we attach a simple input handler instead.
+  // Block implicit form submission on Enter — the .emoroco-entry is a <form>
+  // with a single text input, so Enter would otherwise reload the page before
+  // our keyup handler fires. (Bootstrap 2's typeahead used to swallow Enter.)
+  const form = container.matches && container.matches('form') ? container : container.querySelector('form');
+  if (form) form.addEventListener('submit', (e) => e.preventDefault());
+
   const text$ = $(container).find('.emoroco-text');
 
   text$.on('keyup', (e) => {
@@ -97,13 +100,10 @@ control.onReadys.push(() => {
   addEmorocoHandlers('.emoroco-group');
 
   $('#emoroco-remove-all').click(() => {
-    $('.emoroco-entry').each((i, target) => {
+    $('.emoroco-entry').each((_i, target) => {
       const target$ = $(target);
       control.sendMessage({ type: "control", action: "emo-remove", id: target$.data('id') });
     });
   });
-
-  // Emotions list is now baked — no fetch needed.
-  // emotions is imported from ../data/emotions.js
 });
 

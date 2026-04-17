@@ -44,6 +44,7 @@ display.messageHandlers.push((message) => {
       });
 
       const text$ = emoroco_texts[message.id];
+      if (!text$) return;
       text$.addClass("emo-focused");
       center(text$, 2);
       text$.css("opacity",   "");
