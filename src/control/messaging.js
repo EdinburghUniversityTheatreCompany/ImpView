@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import { FADE_MS } from "../lib/timings.js";
 
 const control = window.control;
 
@@ -69,7 +70,7 @@ messageHandlers.push((message) => {
   switch (message.type) {
     case "hello":
       displayDisconnectedReported = false;
-      $("#loader").fadeOut(1000, () => {
+      $("#loader").fadeOut(FADE_MS, () => {
         $("#loader").remove();
         $("#controls").fadeIn();
       });

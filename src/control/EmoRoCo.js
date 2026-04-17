@@ -1,5 +1,6 @@
 import { $ } from "../lib/dom.js";
 import emotions from "../data/emotions.js";
+import { FADE_MS, FADE_FAST_MS } from "../lib/timings.js";
 
 const control = window.control;
 
@@ -16,7 +17,7 @@ control.callbackHandlers.push((message) => {
     case "emo-remove": {
       const entry$ = emo_entries[message.id];
       if (entry$) {
-        entry$.fadeOut(500, () => entry$.remove());
+        entry$.fadeOut(FADE_FAST_MS, () => entry$.remove());
         delete emo_entries[message.id];
       }
       if (focusedId === message.id) setFocusedId(null);
@@ -122,7 +123,7 @@ function addEmorocoHandlers(selector) {
       const prevId = focusedId;
       if (prev$) {
         delete emo_entries[prevId];
-        prev$.fadeOut(1000, () => prev$.remove());
+        prev$.fadeOut(FADE_MS, () => prev$.remove());
       }
     }
 

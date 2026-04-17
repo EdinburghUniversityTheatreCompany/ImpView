@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import { FADE_MS } from "../lib/timings.js";
 
 const display = window.display;
 const messageHandlers = display.messageHandlers;
@@ -53,7 +54,7 @@ function handleMessage(data) {
 callbackHandlers.push((message) => {
   switch (message.type) {
     case "hello":
-      $("#loader").fadeOut(1000, () => $("#loader").remove());
+      $("#loader").fadeOut(FADE_MS, () => $("#loader").remove());
       break;
   }
 });

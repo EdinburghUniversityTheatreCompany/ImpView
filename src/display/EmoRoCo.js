@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import { FADE_MS, EMOROCO_SETTLE_MS } from "../lib/timings.js";
 
 const display = window.display;
 
@@ -31,13 +32,13 @@ display.messageHandlers.push((message) => {
         text$.css("left", `${nw}px`);
         text$.css("opacity", "0.5");
         text$.css("font-size", "60px");
-      }, 500);
+      }, EMOROCO_SETTLE_MS);
       break;
     }
     case "emo-focus": {
       const current$ = $(".emo-focused");
       current$.removeClass("transition");
-      current$.fadeOut(1000, () => {
+      current$.fadeOut(FADE_MS, () => {
         display.sendMessage({
           type: "control",
           action: "emo-remove",
@@ -61,7 +62,7 @@ display.messageHandlers.push((message) => {
       if (text$ == null) return;
       delete emoroco_texts[message.id];
       text$.removeClass("transition");
-      text$.fadeOut(1000, () => {
+      text$.fadeOut(FADE_MS, () => {
         display.sendMessage({
           type: "control",
           action: "emo-remove",

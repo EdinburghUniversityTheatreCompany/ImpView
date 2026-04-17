@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import { VIDEO_THUMB_SEEK_MS } from "../lib/timings.js";
 
 const control = window.control;
 
@@ -82,7 +83,7 @@ clickHandlers.push(() => {
   $(".preset-videos video").each((i, item) => {
     setTimeout(() => {
       item.currentTime = 2;
-    }, 1000);
+    }, VIDEO_THUMB_SEEK_MS);
   });
 });
 

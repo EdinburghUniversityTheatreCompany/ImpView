@@ -1,5 +1,6 @@
 import { $ } from "../lib/dom.js";
 import * as mediaStore from "../lib/mediaStore.js";
+import { FADE_MS } from "../lib/timings.js";
 
 const display = window.display;
 const messageHandlers = display.messageHandlers;
@@ -99,7 +100,7 @@ messageHandlers.push((message) => {
         }
         display.sendMessage({ type: "control", target: target, action: "paused", callback: true });
         if (onEnd === "fade") {
-          target$.fadeOut(1000, () => display.sendVisibility(target));
+          target$.fadeOut(FADE_MS, () => display.sendVisibility(target));
         }
       });
       // Browsers block autoplay unless the display window itself has had a

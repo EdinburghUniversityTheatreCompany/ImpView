@@ -2,6 +2,7 @@ import { $ } from "../lib/dom.js";
 import { confirmModal } from "../lib/modal.js";
 import { escapeHtml } from "../lib/escape.js";
 import * as mediaStore from "../lib/mediaStore.js";
+import { VIDEO_THUMB_SEEK_MS } from "../lib/timings.js";
 
 const control = window.control;
 const onReadys = control.onReadys;
@@ -39,7 +40,7 @@ async function renderRow(kind) {
         } catch {
           /* metadata not loaded yet */
         }
-      }, 1000);
+      }, VIDEO_THUMB_SEEK_MS);
     }
 
     const del = document.createElement("button");
