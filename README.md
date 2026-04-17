@@ -20,7 +20,7 @@ Commands
 
 ```bash
 npm install        # install JS deps
-npm run dev        # dev server at http://localhost:5173
+npm run dev        # dev server at http://localhost:5173 (forced to 4567 when invoked by `npm test`)
 npm run build      # build to ./dist/
 npm run preview    # serve ./dist/ locally
 npm test           # run Playwright integration tests

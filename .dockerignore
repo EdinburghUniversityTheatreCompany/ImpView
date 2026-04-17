@@ -7,6 +7,7 @@ build
 tmp
 *.log
 .DS_Store
+# Playwright tests — not needed in the nginx image
 tests
 playwright-report
 test-results

@@ -14,7 +14,7 @@ async function openPair(context) {
   await display.waitForLoadState('domcontentloaded');
 
   // Loader disappears once the two-way hello message has been exchanged.
-  await expect(control.locator('#loader')).toHaveCount(0, { timeout: 10_000 });
+  await expect(control.locator('#loader')).toBeHidden({ timeout: 10_000 });
   await expect(control.locator('#controls')).toBeVisible();
 
   // Dismiss the display-side activation overlay so later gestures aren't swallowed.
