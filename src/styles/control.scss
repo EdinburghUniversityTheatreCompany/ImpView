@@ -189,6 +189,15 @@ body::before {
 
 #quick-controls .btn { display: block; }
 
+/* ─── EmoRoCo entries ─── */
+// Draft entry: only the Add button is usable. Focus/Remove are hidden
+// because they'd operate on an entry that hasn't been committed yet.
+.emoroco-entry:not(.committed) .emoroco-focus,
+.emoroco-entry:not(.committed) .emoroco-remove { display: none; }
+
+// Committed entry: Add button is gone (use the draft row to add more).
+.emoroco-entry.committed .emoroco-add { display: none; }
+
 /* ─── Video on-end toggle ─── */
 .video-on-end {
   display: flex;
