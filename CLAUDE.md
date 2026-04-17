@@ -73,6 +73,23 @@ Control opens Display via `window.open('display.html', 'ImpView Display', 'popup
 
 `handleMessage` normalises inbound data with `typeof data === "string"` before parsing — preserve this when touching messaging code.
 
+#### Message shape
+
+```js
+{ type, target, action, value, callback, /* feature-specific extras */ }
+```
+
+- `type` — `"control"` for most feature messages, `"hello"` for the handshake, `"error"` for display → control error reports.
+- `target` — the DOM id / feature name the message applies to (`"image"`, `"video"`, `"text"`, `"credits"`, `"alphabet"`, `"i"`, `"window"` for top-level errors). **EmoRoCo omits `target`** and identifies entries by `id` instead — it's the one feature that doesn't fit the target-based routing.
+- `action` — what to do. Common generic actions handled by [src/display/genericControls.js](src/display/genericControls.js): `show`, `hide`, `fadeIn`, `fadeOut`, `setValue`, `setColor`, `animate`, `toggle-class`. Feature-specific actions: `setSource`, `play`/`pause`/`restart`/`setOnEnd` (video); `roll` (credits); `next`, `setStart` (alphabet); `emo-add-text`, `emo-focus`, `emo-change`, `emo-remove` (EmoRoCo).
+- `value` — the payload. Type depends on the action (string for text, CSS color string for `setColor`, URL for `setSource`, markdown for credits `setValue`, etc).
+- `callback` — when `true`, the message is an acknowledgement/reply and routes through `callbackHandlers` instead of `messageHandlers`.
+- Extras: `id` (EmoRoCo entry), `mediaId` (uploaded media blob lookup via [src/lib/mediaStore.js](src/lib/mediaStore.js)), `byLetter`/`after` (animate), `msg`/`url`/`line`/`trace` (error reports).
+
+Direction: control → display drives everything. Display → control sends `{ type: "hello" }` once, then `callback: true` replies when an action completes (useful for updating button labels after the display has actually faded in), plus `{ type: "error", ... }` for runtime failures.
+
+See [src/control/messaging.js](src/control/messaging.js) for origin/source guards (same-origin only; source must match the paired window) and the disconnect handling in `control.sendMessage`.
+
 ### The global namespace pattern
 
 Both windows expose a single global (`window.control` / `window.display`) holding arrays that every module pushes handlers into:
