@@ -28,13 +28,13 @@ function renderCredits(markdown) {
 const display = window.display;
 
 // One active roll at a time. Cleared before each new roll (or when the
-// credits value is replaced) so we never orphan a poller that keeps
-// running against stale children.
-let progressInterval = null;
+// credits value is replaced) so we never orphan an observer watching
+// stale children.
+let rollObserver = null;
 function stopRoll() {
-  if (progressInterval !== null) {
-    clearInterval(progressInterval);
-    progressInterval = null;
+  if (rollObserver !== null) {
+    rollObserver.disconnect();
+    rollObserver = null;
   }
 }
 
@@ -76,14 +76,23 @@ display.registerTarget("credits", (message) => {
         });
       });
 
-      progressInterval = setInterval(() => {
-        children.forEach((child) => {
-          const childTop = child.getBoundingClientRect().top;
-          if (childTop < windowHeight - triggerHeight && child.style.opacity === "0") {
+      // Shrink the viewport's effective bottom by triggerHeight so a child
+      // is reported as intersecting exactly when its top crosses the line
+      // at (windowHeight - triggerHeight) — the same threshold the old
+      // setInterval poller used.
+      rollObserver = new IntersectionObserver(
+        (entries, obs) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const child = entry.target;
+            if (child.style.opacity !== "0") return;
             animateIn($(child));
-          }
-        });
-      }, 100);
+            obs.unobserve(child);
+          });
+        },
+        { root: null, rootMargin: `0px 0px -${Math.round(triggerHeight)}px 0px`, threshold: 0 }
+      );
+      children.forEach((child) => rollObserver.observe(child));
 
       el.addEventListener(
         "transitionend",
