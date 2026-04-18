@@ -74,10 +74,6 @@ type AnimateMsg = {
   action: "animate";
   value: string;
   byLetter?: boolean;
-  // `before` is sent by the control side but never consumed by the display
-  // animator. Kept optional so existing call sites stay valid; remove once
-  // the dead field is cleaned up. See plans/off-topic-improvements.md.
-  before?: string;
   after?: "hide";
 };
 

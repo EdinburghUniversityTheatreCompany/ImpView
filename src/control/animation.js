@@ -9,7 +9,6 @@ clickHandlers.push(() => {
     const btn$ = $(e.target);
     send(btn$.data("target"), "animate", {
       value: btn$.data("animation"),
-      before: btn$.data("before"),
       after: btn$.data("after"),
       byLetter: btn$.data("by-letter"),
     });

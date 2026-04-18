@@ -15,13 +15,6 @@ the transition duration changes.
 element may not yet have a computed size (especially on first paint). Consider
 deferring with `requestAnimationFrame` so `offsetHeight`/`offsetWidth` are valid.
 
-## src/control/animation.js — `before` field is dead data
-
-The control sends `before: btn$.data("before")` in `animate` messages, but the
-display-side `display/animate.js` never reads `message.before` — only `value`,
-`byLetter`, and `after`. The new typed protocol keeps the field optional for
-back-compat, but it can be removed from both sides.
-
 ## src/control/errorCatcher.js — feature-level errors are unhandled
 
 The control-side error handler only matches `target === "window"`. Display
