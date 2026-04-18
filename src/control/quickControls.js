@@ -20,6 +20,9 @@ function hideAll() {
       $("#controls-show-hide-" + name).click();
     }
   });
+  // Credits and EmoRoCo don't have -state inputs — trigger them directly.
+  $("#controls-hide-credits").click();
+  $("#emoroco-remove-all").click();
 }
 
 function fadeOutAll() {
@@ -29,4 +32,6 @@ function fadeOutAll() {
       $("#controls-fade-" + name).click();
     }
   });
+  $("#controls-hide-credits").click();
+  $("#emoroco-remove-all").click();
 }
