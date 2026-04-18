@@ -1,12 +1,5 @@
 # Off-topic improvements noted during Batch 2
 
-## src/control/EmoRoCo.js — typeahead is a no-op
-
-The old code used Bootstrap 2's `.typeahead()` plugin. That plugin is gone. The port
-registers emotions for import but never hooks them into any autocomplete UI. Batch 3
-or 4 should add a `<datalist>` to the EmoRoCo entry input in `index.html` and wire
-it the same way `text.js` does for games (populate options from the imported array).
-
 ## src/display/credits.js — `$.animate` replaced with CSS transition
 
 The original used jQuery's `.animate({ top: ... })` with a `progress` callback to
@@ -21,21 +14,6 @@ the transition duration changes.
 `center()` is called immediately after `$('body').append(text$)`. At that point the
 element may not yet have a computed size (especially on first paint). Consider
 deferring with `requestAnimationFrame` so `offsetHeight`/`offsetWidth` are valid.
-
-## src/control/image.js and src/display/image.js — `webkitURL` → `URL`
-
-The original code used `window.webkitURL.createObjectURL(...)`. Both ports already
-use the unprefixed `URL.createObjectURL(...)` — good. Double-check `display/image.js`
-does the same (it does).
-
-## src/lib/dom.js — `.keyup()` as zero-arg trigger
-
-The shim's `.keyup()` only registers a handler; calling it with no argument (as a
-trigger) doesn't dispatch a KeyboardEvent. The control modules call `.keyup()` as a
-trigger on inputs (e.g., after setting a val) to fire the onChange logic. A fix:
-mirror jQuery — if called with no argument, dispatch a `new Event('keyup')` on each
-node. Same applies to `.click()` (already works via the native `.click()` method on
-DOM elements, so may be fine).
 
 ## src/control/animation.js — `before` field is dead data
 
