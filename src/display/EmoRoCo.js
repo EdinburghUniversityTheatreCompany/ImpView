@@ -16,7 +16,10 @@ display.registerTarget("emo", (message) => {
       $("body").append(text$);
       emoroco_texts[message.id] = text$;
 
-      center(text$);
+      // Defer the initial centre until after layout: offsetWidth/offsetHeight
+      // are zero on the frame the element is appended, so centering in the
+      // same tick puts long words at (0,0).
+      requestAnimationFrame(() => center(text$));
 
       setTimeout(() => {
         text$.addClass("transition");

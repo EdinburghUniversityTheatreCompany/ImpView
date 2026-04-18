@@ -9,12 +9,6 @@ transition, which is less precise. A better replacement would be an
 as each child crosses the trigger threshold — avoids polling and works correctly when
 the transition duration changes.
 
-## src/display/EmoRoCo.js — `center()` runs before element has layout
-
-`center()` is called immediately after `$('body').append(text$)`. At that point the
-element may not yet have a computed size (especially on first paint). Consider
-deferring with `requestAnimationFrame` so `offsetHeight`/`offsetWidth` are valid.
-
 ## src/control/errorCatcher.js — feature-level errors are unhandled
 
 The control-side error handler only matches `target === "window"`. Display
