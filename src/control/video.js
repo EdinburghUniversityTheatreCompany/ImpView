@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import { send } from "../lib/messages.ts";
 import { VIDEO_THUMB_SEEK_MS } from "../lib/timings.js";
 
 const control = window.control;
@@ -23,34 +24,28 @@ callbackHandlers.push((message) => {
         break;
     }
   } else if (message.type === "error") {
-    $("#controls-video-loader").text(message.value);
+    $("#controls-video-loader").text(message.msg);
   }
 });
 
 clickHandlers.push(() => {
   $("#controls-fade-video").click(() => {
-    if ($("#video-state").val() === "hidden") {
-      control.sendMessage({ type: "control", target: "video", action: "fadeIn" });
-    } else {
-      control.sendMessage({ type: "control", target: "video", action: "fadeOut" });
-    }
+    send("video", $("#video-state").val() === "hidden" ? "fadeIn" : "fadeOut");
   });
 
   // Play toggles play/pause. If the video is hidden, also fade it in —
   // the old "Show and Play" button was just this.
   $("#controls-play-video").click(() => {
     if ($("#video-play-state").val() === "playing") {
-      control.sendMessage({ type: "control", target: "video", action: "pause" });
+      send("video", "pause");
     } else {
-      if ($("#video-state").val() === "hidden") {
-        control.sendMessage({ type: "control", target: "video", action: "fadeIn" });
-      }
-      control.sendMessage({ type: "control", target: "video", action: "play" });
+      if ($("#video-state").val() === "hidden") send("video", "fadeIn");
+      send("video", "play");
     }
   });
 
   $("#controls-restart-video").click(() => {
-    control.sendMessage({ type: "control", target: "video", action: "restart" });
+    send("video", "restart");
   });
 
   $(".preset-videos a").click((e) => {
@@ -71,12 +66,7 @@ clickHandlers.push(() => {
   $('input[name="video-on-end"]').each((_i, el) => {
     el.addEventListener("change", () => {
       if (!el.checked) return;
-      control.sendMessage({
-        type: "control",
-        target: "video",
-        action: "setOnEnd",
-        value: el.value,
-      });
+      send("video", "setOnEnd", { value: el.value });
     });
   });
 
@@ -110,13 +100,7 @@ stateHandlers.push(() => {
 onReadys.push(() => {
   // Sync initial on-end selection to the display.
   const selected = document.querySelector('input[name="video-on-end"]:checked');
-  if (selected)
-    control.sendMessage({
-      type: "control",
-      target: "video",
-      action: "setOnEnd",
-      value: selected.value,
-    });
+  if (selected) send("video", "setOnEnd", { value: selected.value });
 
   const videoInput = document.getElementById("video-input");
   videoInput.addEventListener("input", (e) => {
@@ -139,14 +123,9 @@ onReadys.push(() => {
     $("#controls-video-loader").text("Loading...");
     const mediaId = videoInput.dataset.mediaId;
     if (mediaId) {
-      control.sendMessage({ type: "control", target: "video", action: "setSource", mediaId });
+      send("video", "setSource", { mediaId });
     } else {
-      control.sendMessage({
-        type: "control",
-        target: "video",
-        action: "setSource",
-        value: video_src,
-      });
+      send("video", "setSource", { url: video_src });
     }
   });
 
@@ -163,6 +142,6 @@ onReadys.push(() => {
     delete videoInput.dataset.mediaId;
     $("#video-input").val(url);
     $("#controls-video-loader").text("Loading...");
-    control.sendMessage({ type: "control", target: "video", action: "setSource", value: url });
+    send("video", "setSource", { url });
   });
 });

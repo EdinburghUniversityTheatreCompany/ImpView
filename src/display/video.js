@@ -1,16 +1,14 @@
 import { $ } from "../lib/dom.js";
 import * as mediaStore from "../lib/mediaStore.js";
+import { reply } from "../lib/messages.ts";
 import { FADE_MS } from "../lib/timings.js";
 
 const display = window.display;
-const messageHandlers = display.messageHandlers;
 
-// "fade" (default): stop where it is. "fade": stop and fade out. "loop": restart from 0.
+// "fade" (default): stop and fade out. "loop": restart from 0.
 let onEnd = "fade";
 
-messageHandlers.push((message) => {
-  if (message.type !== "control" || message.target !== "video") return;
-
+display.registerTarget("video", (message) => {
   const target = message.target;
   const target$ = $("#" + target);
 
@@ -20,24 +18,19 @@ messageHandlers.push((message) => {
       break;
     }
     case "setSource": {
-      if (message.mediaId) {
+      if ("mediaId" in message) {
         mediaStore
           .objectUrlFor(message.mediaId)
           .then((url) => {
             target$.attr("src", url);
-            display.sendMessage({
-              type: "control",
-              target: "video",
-              action: "setSource",
-              callback: true,
-            });
+            reply(message);
           })
           .catch((err) => {
             console.error("[video] mediaStore lookup failed:", err);
             display.sendMessage({
               type: "error",
               target: "video",
-              value: "Media not found in library",
+              msg: "Media not found in library",
               callback: true,
             });
           });
@@ -60,12 +53,12 @@ messageHandlers.push((message) => {
             msg = `Error loading video (status ${status}${detail ? `, ${detail}` : ""})`;
             break;
         }
-        console.error("[video] setSource failed:", { url: message.value, status, detail });
-        display.sendMessage({ type: "error", target: "video", value: msg, callback: true });
+        console.error("[video] setSource failed:", { url: message.url, status, detail });
+        display.sendMessage({ type: "error", target: "video", msg, callback: true });
       };
 
       const xhr = new XMLHttpRequest();
-      xhr.open("GET", message.value, true);
+      xhr.open("GET", message.url, true);
       xhr.responseType = "blob";
       xhr.onload = (e) => {
         // 206 Partial Content is valid — some dev servers (vite) always send
@@ -73,12 +66,7 @@ messageHandlers.push((message) => {
         if (e.target.status === 200 || e.target.status === 206) {
           const url = URL.createObjectURL(xhr.response);
           target$.attr("src", url);
-          display.sendMessage({
-            type: "control",
-            target: "video",
-            action: "setSource",
-            callback: true,
-          });
+          reply(message);
         } else {
           error(e.target.status, e.target.statusText);
         }
@@ -98,7 +86,12 @@ messageHandlers.push((message) => {
           videoEl.play().catch(() => {});
           return;
         }
-        display.sendMessage({ type: "control", target: target, action: "paused", callback: true });
+        display.sendMessage({
+          type: "control",
+          target,
+          action: "paused",
+          callback: true,
+        });
         if (onEnd === "fade") {
           target$.fadeOut(FADE_MS, () => display.sendVisibility(target));
         }
@@ -114,23 +107,33 @@ messageHandlers.push((message) => {
           display.sendMessage({
             type: "error",
             target: "video",
-            value: "Click the display window once to enable playback (browser autoplay policy)",
+            msg: "Click the display window once to enable playback (browser autoplay policy)",
             callback: true,
           });
           display.sendMessage({
             type: "control",
-            target: target,
+            target,
             action: "paused",
             callback: true,
           });
         });
       }
-      display.sendMessage({ type: "control", target: target, action: "playing", callback: true });
+      display.sendMessage({
+        type: "control",
+        target,
+        action: "playing",
+        callback: true,
+      });
       break;
     }
     case "pause": {
       target$.get(0).pause();
-      display.sendMessage({ type: "control", target: target, action: "paused", callback: true });
+      display.sendMessage({
+        type: "control",
+        target,
+        action: "paused",
+        callback: true,
+      });
       break;
     }
     case "restart": {
@@ -160,6 +163,11 @@ display.onReadys.push(() => {
         break;
     }
 
-    display.sendMessage({ type: "error", target: "video", value: nice_error, callback: true });
+    display.sendMessage({
+      type: "error",
+      target: "video",
+      msg: nice_error,
+      callback: true,
+    });
   };
 });

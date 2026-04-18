@@ -115,13 +115,15 @@ export type VisibilityMsg = {
 };
 
 // Errors: unified shape (was previously two variants; the feature-level
-// `{ value: msg }` form was renamed to `msg` for consistency).
+// `{ value: msg }` form was renamed to `msg` for consistency). `line` is
+// `string | number` because window.onerror gives a number while the
+// hand-rolled call-throughs from try/catch pass an empty string.
 export type ErrorMsg = {
   type: "error";
   target: Target | "window";
   msg: string;
   url?: string;
-  line?: number;
+  line?: number | string;
   trace?: string;
   callback?: true;
 };

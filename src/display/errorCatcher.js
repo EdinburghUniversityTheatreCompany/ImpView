@@ -8,10 +8,10 @@ display.sendError = (msg, url, line, trace) => {
   display.sendMessage({
     type: "error",
     target: "window",
-    msg: msg,
-    url: url,
-    line: line,
-    trace: trace,
+    msg,
+    url,
+    line,
+    trace,
     callback: true,
   });
 };

@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import { send } from "../lib/messages.ts";
 
 const control = window.control;
 const clickHandlers = control.clickHandlers;
@@ -6,10 +7,7 @@ const clickHandlers = control.clickHandlers;
 clickHandlers.push(() => {
   $(".animate-control").click((e) => {
     const btn$ = $(e.target);
-    control.sendMessage({
-      type: "control",
-      target: btn$.data("target"),
-      action: "animate",
+    send(btn$.data("target"), "animate", {
       value: btn$.data("animation"),
       before: btn$.data("before"),
       after: btn$.data("after"),
@@ -19,10 +17,7 @@ clickHandlers.push(() => {
 
   $(".toggle-class").click((e) => {
     const btn$ = $(e.target);
-    control.sendMessage({
-      type: "control",
-      target: btn$.data("target"),
-      action: "toggle-class",
+    send(btn$.data("target"), "toggle-class", {
       value: btn$.data("animation"),
     });
   });

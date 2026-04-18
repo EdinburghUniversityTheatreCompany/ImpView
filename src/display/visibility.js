@@ -15,7 +15,7 @@ function getVisibility(target) {
 display.sendVisibility = (target) => {
   display.sendMessage({
     type: "query-visible",
-    target: target,
+    target,
     value: getVisibility(target),
     callback: true,
   });
