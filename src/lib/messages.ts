@@ -142,10 +142,33 @@ export type AnyMessage = ControlMessage | HelloMsg | VisibilityMsg | ErrorMsg | 
 // wrong shape. JS callers get the same check at the import boundary.
 // ---------------------------------------------------------------------------
 
-type PayloadFor<T extends Target, A extends string> = Omit<
-  Extract<ControlMessage, { target: T; action: A }>,
-  "type" | "target" | "action"
->;
+// Several variants in ControlMessage use union literals for `target` and
+// `action` (e.g. `{ target: "image" | "video"; action: "setSource"; ... }`
+// and `{ action: "play" | "pause" | "restart"; ... }`). Distribute those
+// unions so each (target, action) pair gets its own variant — without this,
+// `Extract<ControlMessage, { target: "video"; action: "play" }>` returns
+// `never` because the source variant's action is the wider union.
+type DistributeAction<M> = M extends { action: infer A }
+  ? A extends string
+    ? Omit<M, "action"> & { action: A }
+    : never
+  : never;
+type DistributeTarget<M> = M extends { target: infer T }
+  ? T extends Target
+    ? Omit<M, "target"> & { target: T }
+    : never
+  : never;
+type FlattenedControlMessage = DistributeAction<DistributeTarget<ControlMessage>>;
+
+// Per-variant rest tuple: variants with no required payload allow the
+// payload arg to be omitted; everything else requires it.
+type RestArgsFor<T extends Target, A extends string> = FlattenedControlMessage extends infer U
+  ? U extends { type: "control"; target: T; action: A }
+    ? keyof Omit<U, "type" | "target" | "action"> extends never
+      ? [payload?: Record<string, never>]
+      : [payload: Omit<U, "type" | "target" | "action">]
+    : never
+  : never;
 
 // Global typings for the window.control / window.display namespaces. The
 // arrays + sendMessage are created by globals.js + messaging.ts; everything
@@ -189,9 +212,7 @@ declare global {
 export function send<T extends Target, A extends ControlMessage["action"]>(
   target: T,
   action: A,
-  ...rest: keyof PayloadFor<T, A> extends never
-    ? [payload?: Record<string, never>]
-    : [payload: PayloadFor<T, A>]
+  ...rest: RestArgsFor<T, A>
 ): void {
   const payload = rest[0] ?? {};
   window.control.sendMessage({ type: "control", target, action, ...payload } as ControlMessage);
