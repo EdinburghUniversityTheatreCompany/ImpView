@@ -186,7 +186,13 @@ export interface ControlNamespace {
   clickHandlers: Array<() => void>;
   stateHandlers: Array<() => void>;
   display: Window | null;
-  showError: (msg: string, url: string, line: string, trace: string) => void;
+  showError: (
+    msg: string,
+    url: string | undefined,
+    line: string | number | undefined,
+    trace: string | undefined,
+    target: Target | "window"
+  ) => void;
   [key: string]: unknown;
 }
 

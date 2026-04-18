@@ -32,9 +32,10 @@ control.sendMessage = (messageData) => {
       displayDisconnectedReported = true;
       control.showError(
         "Display window is not connected. Reopen it via Start Display.",
-        "",
-        "",
-        "control.display is " + (control.display ? "closed" : "null")
+        undefined,
+        undefined,
+        "control.display is " + (control.display ? "closed" : "null"),
+        "window"
       );
     }
     return;
@@ -64,7 +65,7 @@ function handleMessage(data: unknown) {
     }
   } catch (e) {
     const err = e as Error;
-    control.showError(err.message, "", "", err.stack ?? "");
+    control.showError(err.message, undefined, undefined, err.stack, "window");
   }
 }
 
