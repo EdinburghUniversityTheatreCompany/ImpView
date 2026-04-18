@@ -26,7 +26,6 @@ function renderCredits(markdown) {
 }
 
 const display = window.display;
-const messageHandlers = display.messageHandlers;
 
 // One active roll at a time. Cleared before each new roll (or when the
 // credits value is replaced) so we never orphan a poller that keeps
@@ -39,9 +38,7 @@ function stopRoll() {
   }
 }
 
-messageHandlers.push((message) => {
-  if (message.type !== "control" || message.target !== "credits") return;
-
+display.registerTarget("credits", (message) => {
   const target = message.target;
   const target$ = $("#" + target);
 

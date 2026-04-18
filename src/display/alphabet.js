@@ -6,11 +6,7 @@ const LETTER_OFFSET = 13.85;
 
 let currentLetter = "a";
 
-const messageHandlers = display.messageHandlers;
-
-messageHandlers.push((message) => {
-  if (message.type !== "control" || message.target !== "alphabet") return;
-
+display.registerTarget("alphabet", (message) => {
   const target = message.target;
   // `initial` now lives on the wrapper (so fading the wrapper doesn't drag
   // the 3D subtree into a flattened compositor layer). Everything that used
