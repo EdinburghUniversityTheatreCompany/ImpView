@@ -3,8 +3,15 @@
 // Why TS for this file: the wire format is the contract between two windows
 // that share no runtime state. A typo in an action string would otherwise be
 // a silent no-op. The discriminated unions below let `tsc` catch mismatched
-// payloads at compile time. JS feature modules call `send()` and benefit from
-// the same checking thanks to `allowJs` at the import boundary.
+// payloads at compile time.
+//
+// Scope note: only this file plus the two messaging dispatchers are .ts. The
+// JS feature modules that call `send()` are NOT type-checked against this
+// signature — `tsconfig.json` has `checkJs: false`, so bad calls in .js fail
+// silently from tsc's perspective. Enabling `checkJs` would surface ~300
+// pre-existing implicit-any errors elsewhere; see plans/full-ts-migration.md
+// for the upgrade path. In the meantime the types still serve as live
+// documentation, and any file migrated to .ts gets full enforcement.
 
 export const TARGETS = {
   IMAGE: "image",
