@@ -5,6 +5,10 @@ const display = window.display;
 const LETTER_OFFSET = 13.85;
 
 let currentLetter = "a";
+// Absolute rotation in degrees. `next` always increments (so z→a advances
+// forward one step instead of spinning 346° back). `setStart` snaps to the
+// letter's canonical rotation.
+let cumulativeRotation = 0;
 
 display.registerTarget("alphabet", (message) => {
   const target = message.target;
@@ -33,23 +37,24 @@ display.registerTarget("alphabet", (message) => {
 
 function setLetter(letter) {
   currentLetter = letter.toLowerCase();
-  const aIndex = 97;
-  const index = currentLetter.charCodeAt(0) - aIndex;
-  const rotation = LETTER_OFFSET * index;
-  setRotation(rotation);
-
-  $("#alphabet li").removeClass("current");
-  document.querySelector(`#alphabet li:nth-child(${index + 1})`)?.classList.add("current");
+  const index = currentLetter.charCodeAt(0) - 97;
+  cumulativeRotation = LETTER_OFFSET * index;
+  setRotation(cumulativeRotation);
+  highlight(index);
 }
 
 function nextLetter() {
-  let letter;
-  if (currentLetter !== "z") {
-    letter = String.fromCharCode(currentLetter.charCodeAt(0) + 1);
-  } else {
-    letter = "a";
-  }
-  setLetter(letter);
+  const nextChar =
+    currentLetter === "z" ? "a" : String.fromCharCode(currentLetter.charCodeAt(0) + 1);
+  currentLetter = nextChar;
+  cumulativeRotation += LETTER_OFFSET;
+  setRotation(cumulativeRotation);
+  highlight(nextChar.charCodeAt(0) - 97);
+}
+
+function highlight(index) {
+  $("#alphabet li").removeClass("current");
+  document.querySelector(`#alphabet li:nth-child(${index + 1})`)?.classList.add("current");
 }
 
 function setRotation(rotation) {

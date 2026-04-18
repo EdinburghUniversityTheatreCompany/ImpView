@@ -201,8 +201,8 @@ body {
   transition: opacity 1s;
 }
 
-.alphabet li {
-  transition: transform 0.5s;
+#alphabet {
+  transition: transform 0.5s ease-in-out;
 }
 
 /* ═══════════════════════════════════════════════════════
