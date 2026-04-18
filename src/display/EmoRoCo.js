@@ -1,15 +1,14 @@
 import { $ } from "../lib/dom.js";
+import { reply } from "../lib/messages.ts";
 import { FADE_MS, EMOROCO_SETTLE_MS } from "../lib/timings.js";
 
 const display = window.display;
 
 const emoroco_texts = [];
 
-display.messageHandlers.push((message) => {
-  if (message.type !== "control") return;
-
+display.registerTarget("emo", (message) => {
   switch (message.action) {
-    case "emo-add-text": {
+    case "add": {
       const text$ = $('<div class="emoroco-text"></div>');
       text$.text(message.value);
       text$.data("id", message.id);
@@ -35,16 +34,13 @@ display.messageHandlers.push((message) => {
       }, EMOROCO_SETTLE_MS);
       break;
     }
-    case "emo-focus": {
+    case "focus": {
       const current$ = $(".emo-focused");
       current$.removeClass("transition");
       current$.fadeOut(FADE_MS, () => {
-        display.sendMessage({
-          type: "control",
-          action: "emo-remove",
-          id: current$.data("id"),
-          callback: true,
-        });
+        // Reply with a synthetic remove for the previously-focused entry so
+        // the control side cleans up its own row mirror.
+        reply({ type: "control", target: "emo", action: "remove", id: current$.data("id") });
         delete emoroco_texts[current$.data("id")];
         current$.remove();
       });
@@ -57,23 +53,18 @@ display.messageHandlers.push((message) => {
       text$.css("font-size", "");
       break;
     }
-    case "emo-remove": {
+    case "remove": {
       const text$ = emoroco_texts[message.id];
       if (text$ == null) return;
       delete emoroco_texts[message.id];
       text$.removeClass("transition");
       text$.fadeOut(FADE_MS, () => {
-        display.sendMessage({
-          type: "control",
-          action: "emo-remove",
-          id: text$.data("id"),
-          callback: true,
-        });
+        reply(message);
         text$.remove();
       });
       break;
     }
-    case "emo-change": {
+    case "change": {
       const text$ = emoroco_texts[message.id];
       if (!text$) return;
       text$.text(message.value);

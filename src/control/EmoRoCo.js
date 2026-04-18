@@ -1,4 +1,5 @@
 import { $ } from "../lib/dom.js";
+import { send } from "../lib/messages.ts";
 import emotions from "../data/emotions.js";
 import { FADE_MS, FADE_FAST_MS } from "../lib/timings.js";
 
@@ -11,10 +12,10 @@ let nextId = 1;
 let templateHtml = null;
 
 control.callbackHandlers.push((message) => {
-  if (message.type !== "control") return;
+  if (message.type !== "control" || message.target !== "emo") return;
 
   switch (message.action) {
-    case "emo-remove": {
+    case "remove": {
       const entry$ = emo_entries[message.id];
       if (entry$) {
         entry$.fadeOut(FADE_FAST_MS, () => entry$.remove());
@@ -67,15 +68,10 @@ function commitEntry(entry$) {
   input$.off("keyup");
   input$.on("keyup", (e) => {
     if (e.keyCode === 13) e.preventDefault();
-    control.sendMessage({
-      type: "control",
-      action: "emo-change",
-      value: input$.val(),
-      id,
-    });
+    send("emo", "change", { id, value: input$.val() });
   });
 
-  control.sendMessage({ type: "control", action: "emo-add-text", value, id });
+  send("emo", "add", { id, value });
 
   // Append a fresh draft entry below
   const draft = createEntry(nextId++);
@@ -128,14 +124,14 @@ function addEmorocoHandlers(selector) {
     }
 
     setFocusedId(id);
-    control.sendMessage({ type: "control", action: "emo-focus", id });
+    send("emo", "focus", { id });
   });
 
   entry$.find(".emoroco-remove").click((e) => {
     e.preventDefault();
     const id = Number(container.dataset.id);
     if (emo_entries[id] == null) return;
-    control.sendMessage({ type: "control", action: "emo-remove", id });
+    send("emo", "remove", { id });
   });
 }
 
@@ -166,7 +162,7 @@ control.onReadys.push(() => {
   $("#emoroco-remove-all").click(() => {
     // Only remove committed entries — never the live draft at the bottom.
     emo_entries.forEach((entry$, id) => {
-      if (entry$) control.sendMessage({ type: "control", action: "emo-remove", id });
+      if (entry$) send("emo", "remove", { id });
     });
     setFocusedId(null);
   });
