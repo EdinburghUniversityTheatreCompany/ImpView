@@ -8,13 +8,6 @@ const clickHandlers = control.clickHandlers;
 const stateHandlers = control.stateHandlers;
 const onReadys = control.onReadys;
 
-function titleize(string) {
-  return string.replace(
-    /(\w|')*/g,
-    (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-  );
-}
-
 clickHandlers.push(() => {
   $("#controls-show-hide-text").click(() => {
     send("text", $("#text-state").val() === "hidden" ? "show" : "hide");
@@ -22,15 +15,6 @@ clickHandlers.push(() => {
 
   $("#controls-fade-text").click(() => {
     send("text", $("#text-state").val() === "hidden" ? "fadeIn" : "fadeOut");
-  });
-
-  $("#controls-spellcheck-text").click(() => {
-    const text$ = $("#text-input");
-    control.spellcheck(text$.val(), (responses) => {
-      text$.val(titleize(responses[0]));
-      text$.focus();
-      text$.keyup();
-    });
   });
 });
 

@@ -23,7 +23,3 @@ value: msg, callback: true }` which the control silently drops. Either:
 (a) widen the handler to surface feature errors via the same modal, or
 (b) display them inline beside the relevant control. The typed protocol
 unifies the field name to `msg` (was `value`), which makes (a) trivial.
-
-## src/control/spellCheck.js — AfterTheDeadline service
-
-The spellcheck uses `http://service.afterthedeadline.com/` which is no longer used. Need to fix this
