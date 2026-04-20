@@ -1,0 +1,8 @@
+services:
+  impview:
+    build: .
+    image: impview
+    container_name: impview
+    ports:
+      - "8080:80"
+    restart: unless-stopped
