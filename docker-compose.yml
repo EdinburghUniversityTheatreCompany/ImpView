@@ -4,5 +4,5 @@ services:
     image: impview
     container_name: impview
     ports:
-      - "8080:80"
+      - "${HOST_PORT:-4026}:80" # Map to host port specified by HOST_PORT env var (default: 4026)
     restart: unless-stopped
