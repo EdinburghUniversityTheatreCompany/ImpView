@@ -92,6 +92,19 @@ type StopLoopMsg = {
   action: "stop-loop";
 };
 
+type GracefulStopLoopMsg = {
+  type: "control";
+  target: Target;
+  action: "graceful-stop-loop";
+};
+
+type GracefulStopClassMsg = {
+  type: "control";
+  target: Target;
+  action: "graceful-stop-class";
+  value: string;
+};
+
 type SetSpeedMsg = {
   type: "control";
   target: Target;
@@ -118,6 +131,8 @@ export type ControlMessage =
   | AnimateMsg
   | ToggleClassMsg
   | StopLoopMsg
+  | GracefulStopLoopMsg
+  | GracefulStopClassMsg
   | SetSpeedMsg
   | EmoMsg;
 
@@ -225,7 +240,7 @@ export interface DisplayNamespace {
     target: T,
     handler: (m: Extract<ControlMessage, { target: T }>) => void
   ) => void;
-  activeLoop: { target: Target; className: string } | null;
+  activeLoop: { target: Target; className: string; after?: string; boomerang?: boolean } | null;
   [key: string]: unknown;
 }
 

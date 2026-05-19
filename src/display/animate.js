@@ -114,7 +114,11 @@ display.animate = (message, target, target$) => {
         el.style.animationDirection = "";
       }
 
-      if (message.after === "hide") {
+      // With boomerang the last half-cycle plays in the reverse direction, so the
+      // final visible state is the opposite of what after="hide" would normally imply.
+      // XOR: hide iff exactly one of (after="hide", boomerang) is true.
+      const shouldHide = boomerang ? message.after !== "hide" : message.after === "hide";
+      if (shouldHide) {
         target$.hide();
       }
 
@@ -126,8 +130,9 @@ display.animate = (message, target, target$) => {
     };
 
     if (loop) {
-      // No cleanup on animationend — runs until stop-loop.
-      display.activeLoop = { target, className: value };
+      // No cleanup on animationend — runs until stop-loop / graceful-stop-loop.
+      // Store after and boomerang so the graceful-stop handler can compute visibility.
+      display.activeLoop = { target, className: value, after: message.after, boomerang };
     } else {
       target$.on("animationend", cleanup);
       target$.on("webkitAnimationEnd", cleanup);

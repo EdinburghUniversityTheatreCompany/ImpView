@@ -63,10 +63,12 @@ clickHandlers.push(() => {
     stopLoop(target);
   });
 
-  // Unchecking Loop while a loop is running stops the current loop immediately.
+  // Unchecking Loop while a loop is running: finish the current cycle then stop.
   $("#i-loop").on("change", () => {
     if (!$("#i-loop").get(0)?.checked && activeLoopBtns["i"]) {
-      stopLoop("i");
+      activeLoopBtns["i"].removeClass("active");
+      delete activeLoopBtns["i"];
+      send("i", "graceful-stop-loop");
     }
   });
 });

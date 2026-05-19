@@ -94,8 +94,26 @@ body {
 }
 
 /* ─── ImpView elements ─── */
+// #i-outer is a grandchild of .center.img and wraps #i for independent Y-spin.
+// .content > .img > * gives #i-outer the fill rules; span needs display:block for
+// position:absolute to create a proper block formatting context.
+#i-outer {
+  display: block;
+}
+
+// #i is now a grandchild of .img, so .content > .img > * no longer applies.
+// Re-declare the same fill + background rules here.
 #i {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-image: url("/content/i.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 #text {

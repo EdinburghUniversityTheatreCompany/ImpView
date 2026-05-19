@@ -32,8 +32,11 @@
 
     <div class="content">
       <div class="center img">
-        <!-- normalized from malformed </img> in original -->
-        <span id="i" style="display: none"></span>
+        <!-- #i-outer takes the Y-spin; #i takes the Z-spin and all other animations.
+             #i-outer has no display:none so show/hide on #i works without touching the wrapper. -->
+        <span id="i-outer">
+          <span id="i" style="display: none"></span>
+        </span>
       </div>
     </div>
 

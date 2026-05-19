@@ -48,36 +48,29 @@
             <a id="controls-fade-i" class="btn">Fade i In</a>
           </p>
 
-          <h3 class="group-header">Continuous Spin</h3>
+          <h3 class="group-header">Continuous</h3>
 
           <p>
-            <a
-              class="btn toggle-class"
-              id="i-spin-btn"
-              data-target="i"
-              data-animation="spin-continuous"
+            <a class="btn continuous-btn" id="i-spin-btn" data-animation="spin-continuous"
               >Spin i</a
             >
-            <a
-              class="btn toggle-class"
-              id="i-spin-y-btn"
-              data-target="i"
-              data-animation="spin-y-continuous"
+            <a class="btn continuous-btn" id="i-spin-y-btn" data-animation="spin-y-continuous"
               >Spin Y i</a
             >
           </p>
 
           <p class="i-speed-row">
             <label for="i-speed">Speed</label>
-            <input
-              id="i-speed"
-              type="range"
-              min="0.3"
-              max="5"
-              step="0.1"
-              value="1"
-              data-target="i"
-            />
+            <input id="i-speed" type="range" min="0.3" max="5" step="0.1" value="4.3" />
+          </p>
+
+          <p>
+            <a class="btn continuous-btn" id="i-colour-chase-btn" data-animation="colourChase"
+              >Colour Chase</a
+            >
+            <a class="btn continuous-btn" id="i-3d-motion-btn" data-animation="moveAbout"
+              >3D Motion</a
+            >
           </p>
 
           <p>
@@ -108,13 +101,6 @@
               >Pulse i</a
             >
           </p>
-          <p>
-            <a class="btn toggle-class" data-target="i" data-animation="colourChase"
-              >i Colour Chase</a
-            >
-            <a class="btn toggle-class" data-target="i" data-animation="moveAbout">i 3d Motion</a>
-          </p>
-
           <h3 class="group-header">Animate In</h3>
 
           <p>
