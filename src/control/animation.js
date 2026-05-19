@@ -13,7 +13,7 @@ function stopLoop(target) {
     btn$.removeClass("active");
     delete activeLoopBtns[target];
   }
-  send(target, "stop-loop");
+  send(target, "graceful-stop-loop");
 }
 
 clickHandlers.push(() => {

@@ -153,7 +153,8 @@ messageHandlers.push((message) => {
       el.addEventListener(
         "animationiteration",
         () => {
-          if (!display.activeLoop || display.activeLoop.target !== target) return;
+          // Guard by object identity: skip if a new loop has since replaced this one.
+          if (display.activeLoop !== loop) return;
           let wasReverse = false;
           if (loop.boomerang) {
             const anim = el.getAnimations().find((a) => a.animationName === loop.className);
