@@ -211,12 +211,12 @@ body {
 
 /* ─── Base animated class ─── */
 .animated {
-  animation-duration: 1s;
+  animation-duration: var(--anim-duration, 1s);
   animation-fill-mode: both;
 }
 
 .animated.hinge {
-  animation-duration: 2s;
+  animation-duration: var(--anim-duration, 2s);
 }
 
 /* ─── Attention ─── */
@@ -233,7 +233,7 @@ body {
 .wiggle {
   animation-name: wiggle;
   animation-timing-function: ease-in;
-  animation-duration: 0.75s;
+  animation-duration: var(--anim-duration, 0.75s);
 }
 
 /* ─── Colour/motion ─── */
@@ -250,11 +250,19 @@ body {
 /* ─── Spin ─── */
 .spin {
   animation-name: spin;
-  animation-duration: 0.5s;
+  animation-duration: var(--anim-duration, 0.5s);
   animation-timing-function: linear;
 }
 .spinY {
   animation-name: spinY;
+}
+
+/* ─── Continuous spin (dedicated spin section) ─── */
+.spin-continuous {
+  animation: spin var(--anim-duration, 1s) linear infinite;
+}
+.spin-y-continuous {
+  animation: spinY var(--anim-duration, 1s) linear infinite;
 }
 
 /* ─── Grow/shrink ─── */

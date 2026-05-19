@@ -67,25 +67,71 @@ display.animate = (message, target, target$) => {
       }, i * 100);
     });
   } else {
+    const loop = !!message.loop;
+    const boomerang = !!message.boomerang;
+
+    // Stop any existing loop on this target before starting a new one.
+    if (display.activeLoop && display.activeLoop.target === target) {
+      target$.removeClass("animated");
+      target$.removeClass(display.activeLoop.className);
+      const el = target$.get(0);
+      if (el) {
+        el.style.animationIterationCount = "";
+        el.style.animationDirection = "";
+      }
+      display.activeLoop = null;
+    }
+
     // Reset
     target$.off("animationend");
     target$.off("webkitAnimationEnd");
     target$.removeClass();
 
-    const onAnimEnd = () => {
-      target$.off("animationend", onAnimEnd);
-      target$.off("webkitAnimationEnd", onAnimEnd);
+    // Apply loop/boomerang modifiers as inline styles before adding classes.
+    const el = target$.get(0);
+    if (el) {
+      if (loop && boomerang) {
+        el.style.animationIterationCount = "infinite";
+        el.style.animationDirection = "alternate";
+      } else if (loop) {
+        el.style.animationIterationCount = "infinite";
+        el.style.animationDirection = "normal";
+      } else if (boomerang) {
+        el.style.animationIterationCount = "2";
+        el.style.animationDirection = "alternate";
+      } else {
+        el.style.animationIterationCount = "";
+        el.style.animationDirection = "";
+      }
+    }
+
+    const cleanup = () => {
+      target$.off("animationend", cleanup);
+      target$.off("webkitAnimationEnd", cleanup);
       target$.removeClass();
+      if (el) {
+        el.style.animationIterationCount = "";
+        el.style.animationDirection = "";
+      }
 
       if (message.after === "hide") {
         target$.hide();
       }
 
+      if (display.activeLoop && display.activeLoop.target === target) {
+        display.activeLoop = null;
+      }
+      display.syncSpeedCssVar?.(target);
       display.sendVisibility(target);
     };
 
-    target$.on("animationend", onAnimEnd);
-    target$.on("webkitAnimationEnd", onAnimEnd);
+    if (loop) {
+      // No cleanup on animationend — runs until stop-loop.
+      display.activeLoop = { target, className: value };
+    } else {
+      target$.on("animationend", cleanup);
+      target$.on("webkitAnimationEnd", cleanup);
+    }
 
     target$.addClass("animated");
     target$.addClass(value);

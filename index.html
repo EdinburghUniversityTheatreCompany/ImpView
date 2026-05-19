@@ -48,6 +48,44 @@
             <a id="controls-fade-i" class="btn">Fade i In</a>
           </p>
 
+          <h3 class="group-header">Continuous Spin</h3>
+
+          <p>
+            <a
+              class="btn toggle-class"
+              id="i-spin-btn"
+              data-target="i"
+              data-animation="spin-continuous"
+              >Spin i</a
+            >
+            <a
+              class="btn toggle-class"
+              id="i-spin-y-btn"
+              data-target="i"
+              data-animation="spin-y-continuous"
+              >Spin Y i</a
+            >
+          </p>
+
+          <p class="i-speed-row">
+            <label for="i-speed">Speed</label>
+            <input
+              id="i-speed"
+              type="range"
+              min="0.3"
+              max="5"
+              step="0.1"
+              value="1"
+              data-target="i"
+            />
+          </p>
+
+          <p>
+            <label><input type="checkbox" id="i-loop" /> Loop</label>
+            <label><input type="checkbox" id="i-boomerang" /> Boomerang</label>
+            <a class="btn i-stop-btn" id="i-stop" data-target="i">Stop</a>
+          </p>
+
           <h3 class="group-header">Attention</h3>
 
           <p>

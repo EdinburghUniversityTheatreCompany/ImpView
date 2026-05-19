@@ -75,6 +75,8 @@ type AnimateMsg = {
   value: string;
   byLetter?: boolean;
   after?: "hide";
+  loop?: boolean;
+  boomerang?: boolean;
 };
 
 type ToggleClassMsg = {
@@ -82,6 +84,19 @@ type ToggleClassMsg = {
   target: Target;
   action: "toggle-class";
   value: string;
+};
+
+type StopLoopMsg = {
+  type: "control";
+  target: Target;
+  action: "stop-loop";
+};
+
+type SetSpeedMsg = {
+  type: "control";
+  target: Target;
+  action: "set-speed";
+  value: number;
 };
 
 // EmoRoCo: folded into the target-based shape. Wire actions drop the `emo-`
@@ -102,6 +117,8 @@ export type ControlMessage =
   | AlphabetMsg
   | AnimateMsg
   | ToggleClassMsg
+  | StopLoopMsg
+  | SetSpeedMsg
   | EmoMsg;
 
 // ---------------------------------------------------------------------------
@@ -208,6 +225,7 @@ export interface DisplayNamespace {
     target: T,
     handler: (m: Extract<ControlMessage, { target: T }>) => void
   ) => void;
+  activeLoop: { target: Target; className: string } | null;
   [key: string]: unknown;
 }
 
