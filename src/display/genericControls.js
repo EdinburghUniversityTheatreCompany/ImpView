@@ -121,9 +121,30 @@ messageHandlers.push((message) => {
       }
       break;
     }
-    case "stop-loop":
-      stopActiveLoop(target, target$);
+    case "stop-loop": {
+      const loop = display.activeLoop;
+      if (loop && loop.target === target) {
+        const el = target$.get(0);
+        let wasReverse = false;
+        if (loop.boomerang && el) {
+          const anim = el.getAnimations().find((a) => a.animationName === loop.className);
+          if (anim) {
+            const duration = anim.effect?.getTiming?.()?.duration ?? 1000;
+            // Position within one boomerang cycle (forward + reverse = 2*duration).
+            // elapsed >= duration means we're in the reverse half-cycle.
+            const elapsed = anim.currentTime % (2 * duration);
+            wasReverse = elapsed >= duration;
+          }
+        }
+        stopActiveLoop(target, target$);
+        const shouldHide = (loop.after === "hide") !== wasReverse;
+        if (shouldHide) target$.hide();
+        display.sendVisibility(target);
+      } else {
+        stopActiveLoop(target, target$);
+      }
       break;
+    }
     case "graceful-stop-loop": {
       const loop = display.activeLoop;
       if (!loop || loop.target !== target) break;
